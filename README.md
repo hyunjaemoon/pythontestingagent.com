@@ -1,2 +1,2 @@
 # pythontestingagent.com
-Python Testing Agent Powered by LLM with Pyodide
+Python Testing Agent Powered by LLM
