@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Python Testing Agent</title>
     
     <style>
@@ -17,6 +17,8 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 20px;
+            margin: 0;
+            overflow-x: hidden;
         }
 
         .container {
@@ -26,6 +28,8 @@
             border-radius: 15px;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
             overflow: hidden;
+            width: 100%;
+            box-sizing: border-box;
         }
 
         .header {
@@ -52,11 +56,13 @@
             display: flex;
             gap: 30px;
             align-items: flex-start;
+            width: 100%;
         }
 
         .content-area {
             flex: 1;
             min-width: 0;
+            width: 100%;
         }
 
         /* Monetization Sidebar */
@@ -291,34 +297,227 @@
         }
 
         @media (max-width: 768px) {
-            .container {
-                margin: 10px;
-                border-radius: 10px;
+            body {
+                padding: 0;
+                margin: 0;
+                overflow-x: hidden;
             }
 
-            .main-content {
-                padding: 20px;
-                flex-direction: column;
-                gap: 20px;
+            .container {
+                margin: 0;
+                border-radius: 0;
+                max-width: 100%;
+                width: 100%;
+                box-shadow: none;
+            }
+
+            .header {
+                padding: 20px 15px;
             }
 
             .header h1 {
-                font-size: 2rem;
+                font-size: 1.8rem;
+            }
+
+            .header p {
+                font-size: 1rem;
+            }
+
+            .main-content {
+                padding: 15px;
+                flex-direction: column;
+                gap: 15px;
+                width: 100%;
             }
 
             .monetization-sidebar {
                 width: 100%;
                 position: static;
                 order: 2;
+                padding: 15px;
             }
 
             .content-area {
                 order: 1;
+                width: 100%;
+                flex: 1;
+            }
+
+            .form-group {
+                margin-bottom: 20px;
+            }
+
+            textarea {
+                padding: 12px;
+                font-size: 13px;
+            }
+
+            .question-input {
+                min-height: 80px;
+            }
+
+            .code-input {
+                min-height: 150px;
+            }
+
+            .submit-btn {
+                padding: 12px 20px;
+                font-size: 1rem;
             }
 
             .footer-links {
                 flex-direction: column;
                 gap: 10px;
+            }
+
+            .footer-monetization {
+                padding: 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 0;
+                margin: 0;
+                overflow-x: hidden;
+            }
+
+            .header {
+                padding: 15px 10px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .main-content {
+                padding: 10px;
+                width: 100%;
+            }
+
+            .monetization-sidebar {
+                padding: 10px;
+                width: 100%;
+            }
+
+            .content-area {
+                width: 100%;
+            }
+
+            textarea {
+                padding: 10px;
+                font-size: 12px;
+            }
+
+            .submit-btn {
+                padding: 10px 15px;
+                font-size: 0.9rem;
+            }
+
+            /* Prevent horizontal overflow */
+            .container {
+                overflow-x: hidden;
+            }
+
+            .main-content {
+                overflow-x: hidden;
+            }
+
+            .content-area {
+                overflow-x: hidden;
+            }
+
+            /* Ensure text wraps properly */
+            .header p {
+                word-wrap: break-word;
+                overflow-wrap: break-word;
+            }
+
+            label {
+                word-wrap: break-word;
+                overflow-wrap: break-word;
+            }
+
+            /* Make sure buttons don't overflow */
+            button {
+                max-width: 100%;
+                word-wrap: break-word;
+            }
+
+            /* Ensure all elements are properly contained */
+            * {
+                max-width: 100%;
+                box-sizing: border-box;
+            }
+
+            /* Prevent any horizontal scrolling */
+            html, body {
+                overflow-x: hidden;
+                width: 100%;
+            }
+
+            /* Ensure textareas don't overflow */
+            textarea {
+                width: 100%;
+                max-width: 100%;
+                box-sizing: border-box;
+            }
+
+            /* Ensure forms don't overflow */
+            form {
+                width: 100%;
+                max-width: 100%;
+            }
+
+            /* Force full width stretching */
+            .container, .main-content, .content-area, .monetization-sidebar {
+                width: 100% !important;
+                max-width: 100% !important;
+                min-width: 100% !important;
+            }
+
+            /* Remove any flex constraints */
+            .content-area {
+                flex: 1 1 100% !important;
+            }
+        }
+
+        @media (max-width: 320px) {
+            body {
+                padding: 0;
+                margin: 0;
+            }
+
+            .container {
+                margin: 0;
+                border-radius: 0;
+                box-shadow: none;
+            }
+
+            .header {
+                padding: 10px 5px;
+            }
+
+            .header h1 {
+                font-size: 1.2rem;
+            }
+
+            .main-content {
+                padding: 5px;
+            }
+
+            .monetization-sidebar {
+                padding: 5px;
+            }
+
+            textarea {
+                padding: 8px;
+                font-size: 11px;
+            }
+
+            .submit-btn {
+                padding: 8px 12px;
+                font-size: 0.8rem;
             }
         }
     </style>
@@ -338,7 +537,7 @@
                 <form id="gradeForm">
                     <div class="form-group">
                         <label for="question">Question or Problem Description:</label>
-                        <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 8px;">
+                        <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 8px; flex-wrap: wrap;">
                             <button type="button" id="generateQuestionBtn" style="
                                 background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
                                 color: white;
@@ -349,6 +548,7 @@
                                 font-weight: 600;
                                 cursor: pointer;
                                 transition: transform 0.2s ease, box-shadow 0.2s ease;
+                                white-space: nowrap;
                             ">🎲 Generate Question</button>
                             <span id="generateStatus" style="font-size: 0.9rem; color: #666;"></span>
                         </div>
