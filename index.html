@@ -5,10 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Python Testing Agent</title>
     
-    <!-- Google AdSense -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9028735325330673"
-     crossorigin="anonymous"></script>
-    
     <style>
         * {
             margin: 0;
@@ -38,59 +34,109 @@
             padding: 30px;
             text-align: center;
             position: relative;
-            min-height: 200px; /* Ensure header has enough height for ad */
-        }
-
-        /* Header Ad */
-        .header-ad {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            width: 300px;
-            height: 250px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            display: block;
-            overflow: hidden;
-            z-index: 10; /* Ensure ad stays on top */
         }
 
         .header h1 {
             font-size: 2.5rem;
             margin-bottom: 10px;
             font-weight: 300;
-            margin-right: 320px; /* Make space for header ad */
         }
 
         .header p {
             font-size: 1.1rem;
             opacity: 0.9;
-            margin-right: 320px; /* Make space for header ad */
         }
 
         .main-content {
             padding: 40px;
             display: flex;
             gap: 30px;
-            align-items: flex-start; /* Prevent stretching */
+            align-items: flex-start;
         }
 
         .content-area {
             flex: 1;
-            min-width: 0; /* Prevent flex item from overflowing */
+            min-width: 0;
         }
 
-        /* Sidebar Ad */
-        .sidebar-ad {
+        /* Monetization Sidebar */
+        .monetization-sidebar {
             width: 300px;
-            min-height: 600px;
             background: #f8f9fa;
             border-radius: 8px;
-            display: block;
-            overflow: hidden;
-            flex-shrink: 0; /* Prevent sidebar from shrinking */
+            padding: 20px;
+            flex-shrink: 0;
             position: sticky;
-            top: 20px; /* Stick to top when scrolling */
+            top: 20px;
+        }
+
+        .monetization-section {
+            margin-bottom: 25px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #e1e5e9;
+        }
+
+        .monetization-section h3 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .affiliate-link {
+            display: block;
+            padding: 10px 15px;
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            text-align: center;
+            font-weight: 600;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .affiliate-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+            color: white;
+            text-decoration: none;
+        }
+
+        .premium-feature {
+            background: linear-gradient(135deg, #ffc107 0%, #ff8c00 100%);
+            color: white;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .donation-section {
+            background: linear-gradient(135deg, #6f42c1 0%, #e83e8c 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .donation-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-top: 10px;
+            transition: all 0.2s ease;
+        }
+
+        .donation-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-1px);
         }
 
         .form-group {
@@ -213,15 +259,35 @@
             font-size: 1.1rem;
         }
 
-        /* Footer Ad */
-        .footer-ad {
-            width: 100%;
-            height: 90px;
+        /* Footer Monetization */
+        .footer-monetization {
             background: #f8f9fa;
-            border-radius: 8px;
-            display: block;
-            overflow: hidden;
-            margin-top: 30px;
+            padding: 20px;
+            border-top: 1px solid #e1e5e9;
+            text-align: center;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+
+        .footer-link {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: 6px;
+            transition: background-color 0.2s ease;
+        }
+
+        .footer-link:hover {
+            background-color: #e9ecef;
+            color: #667eea;
+            text-decoration: none;
         }
 
         @media (max-width: 768px) {
@@ -236,42 +302,23 @@
                 gap: 20px;
             }
 
-            .header {
-                min-height: auto;
-                padding: 20px;
-            }
-
             .header h1 {
                 font-size: 2rem;
-                margin-right: 0; /* Remove margin on mobile */
             }
 
-            .header p {
-                margin-right: 0; /* Remove margin on mobile */
-            }
-
-            .header-ad {
-                position: static;
+            .monetization-sidebar {
                 width: 100%;
-                height: 250px;
-                margin-top: 15px;
-                z-index: auto;
-            }
-
-            .sidebar-ad {
-                width: 100%;
-                min-height: 250px;
                 position: static;
-                order: 2; /* Move sidebar ad below content on mobile */
+                order: 2;
             }
 
             .content-area {
-                order: 1; /* Ensure content comes first on mobile */
+                order: 1;
             }
 
-            .footer-ad {
-                height: 250px;
-                margin-top: 20px;
+            .footer-links {
+                flex-direction: column;
+                gap: 10px;
             }
         }
     </style>
@@ -281,18 +328,9 @@
         <div class="header">
             <h1>🐍 Python Testing Agent</h1>
             <p>Submit your Python code and questions for intelligent grading and feedback</p>
-            
-            <!-- Header Ad -->
-            <div class="header-ad">
-                <!-- AdSense Header Ad -->
-                <ins class="adsbygoogle"
-                     style="display:block"
-                     data-ad-client="ca-pub-9028735325330673"
-                     data-ad-slot="YOUR_HEADER_AD_SLOT"
-                     data-ad-format="rectangle"
-                     data-ad-width="300"
-                     data-ad-height="250"></ins>
-            </div>
+            <p style="margin-top: 10px; font-size: 0.9rem; opacity: 0.8;">
+                By <a href="https://hyunjaemoon.com" target="_blank" style="color: white; text-decoration: underline;">Hyun Jae Moon</a>
+            </p>
         </div>
 
         <div class="main-content">
@@ -347,44 +385,43 @@
                 <div class="status" id="status">
                     Server Status: <span id="serverStatus">Checking...</span>
                 </div>
+            </div>
 
-                <!-- Footer Ad -->
-                <div class="footer-ad">
-                    <!-- AdSense Footer Ad -->
-                    <ins class="adsbygoogle"
-                         style="display:block"
-                         data-ad-client="ca-pub-9028735325330673"
-                         data-ad-slot="YOUR_FOOTER_AD_SLOT"
-                         data-ad-format="horizontal"
-                         data-ad-width="728"
-                         data-ad-height="90"></ins>
+            <!-- Monetization Sidebar -->
+            <div class="monetization-sidebar">
+                <div class="monetization-section">
+                    <h3>📚 Learning Python</h3>
+                    <a href="https://www.amazon.com/dp/1718502702?tag=pythontesting-20" class="affiliate-link" target="_blank">
+                        🐍 Python Crash Course
+                    </a>
+                    <a href="https://www.amazon.com/dp/1098171306?tag=pythontesting-20" class="affiliate-link" target="_blank">
+                        📖 Learning Python
+                    </a>
+                    <a href="https://www.amazon.com/dp/1718503407?tag=pythontesting-20" class="affiliate-link" target="_blank">
+                        🎯 Automate the Boring Stuff
+                    </a>
+                    <a href="https://www.amazon.com/dp/109810403X?tag=pythontesting-20" class="affiliate-link" target="_blank">
+                        📊 Python for Data Analysis
+                    </a>
+                    <a href="https://www.amazon.com/dp/1492056359?tag=pythontesting-20" class="affiliate-link" target="_blank">
+                        🧠 Fluent Python
+                    </a>
                 </div>
             </div>
+        </div>
 
-            <!-- Sidebar Ad -->
-            <div class="sidebar-ad">
-                <!-- AdSense Sidebar Ad -->
-                <ins class="adsbygoogle"
-                     style="display:block"
-                     data-ad-client="ca-pub-9028735325330673"
-                     data-ad-slot="YOUR_SIDEBAR_AD_SLOT"
-                     data-ad-format="vertical"
-                     data-ad-width="300"
-                     data-ad-height="600"></ins>
+        <!-- Footer Monetization -->
+        <div class="footer-monetization">
+            <div class="footer-links">
+                <a href="#" class="footer-link" onclick="showContact()">Contact</a>
             </div>
+            <p style="color: #666; font-size: 0.9rem;">
+                Made with ❤️ for the Python community
+            </p>
         </div>
     </div>
 
     <script>
-        // Initialize AdSense ads
-        function initAds() {
-            try {
-                (adsbygoogle = window.adsbygoogle || []).push({});
-            } catch (e) {
-                console.log('AdSense error:', e);
-            }
-        }
-
         // Check server status on page load
         window.addEventListener('load', async () => {
             try {
@@ -396,9 +433,6 @@
                 document.getElementById('serverStatus').textContent = 'Offline';
                 document.getElementById('serverStatus').style.color = '#dc3545';
             }
-            
-            // Initialize ads after a short delay to ensure DOM is ready
-            setTimeout(initAds, 1000);
         });
 
         // Handle form submission
@@ -560,6 +594,13 @@ print(example_function())`;
             this.style.transform = 'translateY(0)';
             this.style.boxShadow = 'none';
         });
+
+        // Monetization functions
+        function showContact() {
+            alert('Contact Information\n\n' +
+                  '• General Inquiries: calhyunjaemoon@gmail.com\n' +
+                  'We\'d love to hear from you!');
+        }
     </script>
 </body>
 </html>
