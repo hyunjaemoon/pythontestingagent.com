@@ -98,3 +98,38 @@ class PythonTestingAgent:
                 "grade": 0,
                 "feedback": f"Error during grading: {str(e)}"
             }
+    
+    def generate_question(self, topic: str) -> str:
+        """
+        Generate a question based on a given topic.
+        
+        Args:
+            topic (str): The topic for the question
+            
+        Returns:
+            str: The generated question
+        """
+        try:
+            prompt = f"""
+            Generate a question based on the following topic:
+            {topic}
+            
+            Please return the question in a json format with:
+            - "question": the generated question
+            """
+            
+            response = self.chat(prompt, [])
+            import json
+            import re
+            
+            json_match = re.search(r'\{.*\}', response, re.DOTALL)
+            if json_match:
+                try:
+                    result = json.loads(json_match.group())
+                    return result['question']
+                except json.JSONDecodeError:
+                    pass
+            
+            return "Error generating question"
+        except Exception as e:
+            return f"Error during question generation: {str(e)}"

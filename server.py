@@ -14,6 +14,12 @@ def home():
 def health():
     return jsonify({"status": "healthy"})
 
+@app.route('/generate-question', methods=['POST'])
+def generate_question():
+    data = request.json
+    question = agent.generate_question(data.get('topic'))
+    return jsonify({"question": question})
+
 @app.route('/grade', methods=['POST'])
 def grade():
     data = request.json

@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Python Testing Agent</title>
+    
+    <!-- Google AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9028735325330673"
+     crossorigin="anonymous"></script>
+    
     <style>
         * {
             margin: 0;
@@ -32,21 +37,60 @@
             color: white;
             padding: 30px;
             text-align: center;
+            position: relative;
+            min-height: 200px; /* Ensure header has enough height for ad */
+        }
+
+        /* Header Ad */
+        .header-ad {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 300px;
+            height: 250px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            display: block;
+            overflow: hidden;
+            z-index: 10; /* Ensure ad stays on top */
         }
 
         .header h1 {
             font-size: 2.5rem;
             margin-bottom: 10px;
             font-weight: 300;
+            margin-right: 320px; /* Make space for header ad */
         }
 
         .header p {
             font-size: 1.1rem;
             opacity: 0.9;
+            margin-right: 320px; /* Make space for header ad */
         }
 
         .main-content {
             padding: 40px;
+            display: flex;
+            gap: 30px;
+            align-items: flex-start; /* Prevent stretching */
+        }
+
+        .content-area {
+            flex: 1;
+            min-width: 0; /* Prevent flex item from overflowing */
+        }
+
+        /* Sidebar Ad */
+        .sidebar-ad {
+            width: 300px;
+            min-height: 600px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            display: block;
+            overflow: hidden;
+            flex-shrink: 0; /* Prevent sidebar from shrinking */
+            position: sticky;
+            top: 20px; /* Stick to top when scrolling */
         }
 
         .form-group {
@@ -169,34 +213,15 @@
             font-size: 1.1rem;
         }
 
-        .examples {
-            margin-top: 40px;
-            padding: 25px;
+        /* Footer Ad */
+        .footer-ad {
+            width: 100%;
+            height: 90px;
             background: #f8f9fa;
             border-radius: 8px;
-        }
-
-        .examples h3 {
-            margin-bottom: 15px;
-            color: #333;
-        }
-
-        .example-item {
-            margin-bottom: 15px;
-            padding: 15px;
-            background: white;
-            border-radius: 6px;
-            border-left: 4px solid #667eea;
-        }
-
-        .example-item h4 {
-            color: #667eea;
-            margin-bottom: 8px;
-        }
-
-        .example-item p {
-            color: #666;
-            font-size: 0.95rem;
+            display: block;
+            overflow: hidden;
+            margin-top: 30px;
         }
 
         @media (max-width: 768px) {
@@ -207,10 +232,46 @@
 
             .main-content {
                 padding: 20px;
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .header {
+                min-height: auto;
+                padding: 20px;
             }
 
             .header h1 {
                 font-size: 2rem;
+                margin-right: 0; /* Remove margin on mobile */
+            }
+
+            .header p {
+                margin-right: 0; /* Remove margin on mobile */
+            }
+
+            .header-ad {
+                position: static;
+                width: 100%;
+                height: 250px;
+                margin-top: 15px;
+                z-index: auto;
+            }
+
+            .sidebar-ad {
+                width: 100%;
+                min-height: 250px;
+                position: static;
+                order: 2; /* Move sidebar ad below content on mobile */
+            }
+
+            .content-area {
+                order: 1; /* Ensure content comes first on mobile */
+            }
+
+            .footer-ad {
+                height: 250px;
+                margin-top: 20px;
             }
         }
     </style>
@@ -220,65 +281,110 @@
         <div class="header">
             <h1>🐍 Python Testing Agent</h1>
             <p>Submit your Python code and questions for intelligent grading and feedback</p>
+            
+            <!-- Header Ad -->
+            <div class="header-ad">
+                <!-- AdSense Header Ad -->
+                <ins class="adsbygoogle"
+                     style="display:block"
+                     data-ad-client="ca-pub-9028735325330673"
+                     data-ad-slot="YOUR_HEADER_AD_SLOT"
+                     data-ad-format="rectangle"
+                     data-ad-width="300"
+                     data-ad-height="250"></ins>
+            </div>
         </div>
 
         <div class="main-content">
-            <form id="gradeForm">
-                <div class="form-group">
-                    <label for="question">Question or Problem Description:</label>
-                    <textarea 
-                        id="question" 
-                        class="question-input" 
-                        placeholder="Describe the problem or question you're working on..."
-                        required
-                    ></textarea>
+            <div class="content-area">
+                <form id="gradeForm">
+                    <div class="form-group">
+                        <label for="question">Question or Problem Description:</label>
+                        <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 8px;">
+                            <button type="button" id="generateQuestionBtn" style="
+                                background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+                                color: white;
+                                border: none;
+                                padding: 8px 16px;
+                                border-radius: 6px;
+                                font-size: 0.9rem;
+                                font-weight: 600;
+                                cursor: pointer;
+                                transition: transform 0.2s ease, box-shadow 0.2s ease;
+                            ">🎲 Generate Question</button>
+                            <span id="generateStatus" style="font-size: 0.9rem; color: #666;"></span>
+                        </div>
+                        <textarea 
+                            id="question" 
+                            class="question-input" 
+                            placeholder="Describe the problem or question you're working on..."
+                            required
+                        >Write a function that calculates the factorial of a number</textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="code">Python Code:</label>
+                        <textarea 
+                            id="code" 
+                            class="code-input" 
+                            placeholder="Enter your Python code here..."
+                            required
+                        ></textarea>
+                    </div>
+
+                    <button type="submit" class="submit-btn" id="submitBtn">
+                        Grade My Code
+                    </button>
+                </form>
+
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <p>Analyzing your code...</p>
                 </div>
 
-                <div class="form-group">
-                    <label for="code">Python Code:</label>
-                    <textarea 
-                        id="code" 
-                        class="code-input" 
-                        placeholder="Enter your Python code here..."
-                        required
-                    ></textarea>
+                <div class="result" id="result"></div>
+
+                <div class="status" id="status">
+                    Server Status: <span id="serverStatus">Checking...</span>
                 </div>
 
-                <button type="submit" class="submit-btn" id="submitBtn">
-                    Grade My Code
-                </button>
-            </form>
-
-            <div class="loading" id="loading">
-                <div class="spinner"></div>
-                <p>Analyzing your code...</p>
+                <!-- Footer Ad -->
+                <div class="footer-ad">
+                    <!-- AdSense Footer Ad -->
+                    <ins class="adsbygoogle"
+                         style="display:block"
+                         data-ad-client="ca-pub-9028735325330673"
+                         data-ad-slot="YOUR_FOOTER_AD_SLOT"
+                         data-ad-format="horizontal"
+                         data-ad-width="728"
+                         data-ad-height="90"></ins>
+                </div>
             </div>
 
-            <div class="result" id="result"></div>
-
-            <div class="status" id="status">
-                Server Status: <span id="serverStatus">Checking...</span>
-            </div>
-
-            <div class="examples">
-                <h3>💡 Example Questions</h3>
-                <div class="example-item">
-                    <h4>Basic Function</h4>
-                    <p>"Write a function that calculates the factorial of a number"</p>
-                </div>
-                <div class="example-item">
-                    <h4>Data Structure</h4>
-                    <p>"Implement a function to reverse a string without using built-in reverse methods"</p>
-                </div>
-                <div class="example-item">
-                    <h4>Algorithm</h4>
-                    <p>"Write a function to find the longest common subsequence between two strings"</p>
-                </div>
+            <!-- Sidebar Ad -->
+            <div class="sidebar-ad">
+                <!-- AdSense Sidebar Ad -->
+                <ins class="adsbygoogle"
+                     style="display:block"
+                     data-ad-client="ca-pub-9028735325330673"
+                     data-ad-slot="YOUR_SIDEBAR_AD_SLOT"
+                     data-ad-format="vertical"
+                     data-ad-width="300"
+                     data-ad-height="600"></ins>
             </div>
         </div>
     </div>
 
     <script>
+        // Initialize AdSense ads
+        function initAds() {
+            try {
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            } catch (e) {
+                console.log('AdSense error:', e);
+            }
+        }
+
         // Check server status on page load
         window.addEventListener('load', async () => {
             try {
@@ -290,6 +396,9 @@
                 document.getElementById('serverStatus').textContent = 'Offline';
                 document.getElementById('serverStatus').style.color = '#dc3545';
             }
+            
+            // Initialize ads after a short delay to ensure DOM is ready
+            setTimeout(initAds, 1000);
         });
 
         // Handle form submission
@@ -390,6 +499,66 @@ print(example_function())`;
                 // Move cursor to position after the inserted tab
                 this.selectionStart = this.selectionEnd = start + 4;
             }
+        });
+
+        // Handle generate question button
+        document.getElementById('generateQuestionBtn').addEventListener('click', async function() {
+            const button = this;
+            const statusSpan = document.getElementById('generateStatus');
+            const questionTextarea = document.getElementById('question');
+            
+            // Disable button and show loading state
+            button.disabled = true;
+            button.style.opacity = '0.6';
+            statusSpan.textContent = 'Generating...';
+            
+            try {
+                const response = await fetch('/generate-question', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        topic: 'python programming'
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    questionTextarea.value = data.question;
+                    statusSpan.textContent = 'Question generated!';
+                    statusSpan.style.color = '#28a745';
+                    
+                    // Clear status after 3 seconds
+                    setTimeout(() => {
+                        statusSpan.textContent = '';
+                    }, 3000);
+                } else {
+                    statusSpan.textContent = 'Failed to generate question';
+                    statusSpan.style.color = '#dc3545';
+                }
+            } catch (error) {
+                statusSpan.textContent = 'Connection error';
+                statusSpan.style.color = '#dc3545';
+            } finally {
+                // Re-enable button
+                button.disabled = false;
+                button.style.opacity = '1';
+            }
+        });
+
+        // Add hover effect for generate question button
+        document.getElementById('generateQuestionBtn').addEventListener('mouseenter', function() {
+            if (!this.disabled) {
+                this.style.transform = 'translateY(-1px)';
+                this.style.boxShadow = '0 5px 15px rgba(40, 167, 69, 0.3)';
+            }
+        });
+
+        document.getElementById('generateQuestionBtn').addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+            this.style.boxShadow = 'none';
         });
     </script>
 </body>
