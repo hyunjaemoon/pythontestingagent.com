@@ -5,7 +5,42 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Python Testing Agent</title>
     
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --accent-gradient: linear-gradient(135deg, #ff6b6b 0%, #4ecdc4 100%);
+            --success-gradient: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            --warning-gradient: linear-gradient(135deg, #fdbb2d 0%, #22c1c3 100%);
+            --danger-gradient: linear-gradient(135deg, #ff512f 0%, #dd2476 100%);
+            --dark-gradient: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            
+            --bg-color: #f8fafc;
+            --surface-color: rgba(255, 255, 255, 0.95);
+            --text-primary: #1a202c;
+            --text-secondary: #4a5568;
+            --border-color: rgba(255, 255, 255, 0.2);
+            --shadow-light: 0 20px 40px rgba(0, 0, 0, 0.1);
+            --shadow-heavy: 0 30px 60px rgba(0, 0, 0, 0.15);
+            
+            --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-bounce: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #0f172a;
+            --surface-color: rgba(30, 41, 59, 0.95);
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --border-color: rgba(255, 255, 255, 0.1);
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -13,48 +48,150 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--primary-gradient);
             min-height: 100vh;
             padding: 20px;
             margin: 0;
             overflow-x: hidden;
+            transition: var(--transition-smooth);
+            position: relative;
         }
+
+        /* Animated Background */
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: var(--primary-gradient);
+        }
+
+        .particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.7; }
+            50% { transform: translateY(-20px) rotate(180deg); opacity: 1; }
+        }
+
+        .particle:nth-child(1) { width: 20px; height: 20px; top: 20%; left: 20%; animation-delay: 0s; }
+        .particle:nth-child(2) { width: 15px; height: 15px; top: 40%; left: 80%; animation-delay: 2s; }
+        .particle:nth-child(3) { width: 25px; height: 25px; top: 70%; left: 40%; animation-delay: 4s; }
+        .particle:nth-child(4) { width: 12px; height: 12px; top: 90%; left: 90%; animation-delay: 1s; }
+        .particle:nth-child(5) { width: 18px; height: 18px; top: 10%; left: 70%; animation-delay: 3s; }
+        .particle:nth-child(6) { width: 22px; height: 22px; top: 60%; left: 10%; animation-delay: 5s; }
 
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            background: var(--surface-color);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            box-shadow: var(--shadow-heavy);
+            border: 1px solid var(--border-color);
             overflow: hidden;
             width: 100%;
             box-sizing: border-box;
+            transition: var(--transition-smooth);
+            animation: slideUp 0.8s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: var(--surface-color);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: 50px;
+            padding: 12px 16px;
+            cursor: pointer;
+            transition: var(--transition-bounce);
+            box-shadow: var(--shadow-light);
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: var(--shadow-heavy);
+        }
+
+        .theme-toggle i {
+            font-size: 1.2rem;
+            color: var(--text-primary);
         }
 
         .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--primary-gradient);
             color: white;
-            padding: 30px;
+            padding: 40px 30px;
             text-align: center;
             position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            animation: shimmer 3s ease-in-out infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            50% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+            100% { transform: translateX(200%) translateY(200%) rotate(45deg); }
         }
 
         .header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-            font-weight: 300;
+            font-size: 3rem;
+            margin-bottom: 15px;
+            font-weight: 700;
+            position: relative;
+            z-index: 2;
+            text-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            background: linear-gradient(45deg, #fff, #f0f8ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .header p {
-            font-size: 1.1rem;
-            opacity: 0.9;
+            font-size: 1.2rem;
+            opacity: 0.95;
+            position: relative;
+            z-index: 2;
+            font-weight: 400;
         }
 
         .main-content {
-            padding: 40px;
+            padding: 50px;
             display: flex;
-            gap: 30px;
+            gap: 40px;
             align-items: flex-start;
             width: 100%;
         }
@@ -67,45 +204,84 @@
 
         /* Monetization Sidebar */
         .monetization-sidebar {
-            width: 300px;
-            background: #f8f9fa;
-            border-radius: 8px;
-            padding: 20px;
+            width: 320px;
+            background: var(--surface-color);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 25px;
             flex-shrink: 0;
             position: sticky;
             top: 20px;
+            box-shadow: var(--shadow-light);
+            transition: var(--transition-smooth);
+        }
+
+        .monetization-sidebar:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-heavy);
         }
 
         .monetization-section {
-            margin-bottom: 25px;
-            padding: 15px;
-            background: white;
-            border-radius: 8px;
-            border: 1px solid #e1e5e9;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: var(--transition-smooth);
+        }
+
+        .monetization-section:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
         }
 
         .monetization-section h3 {
-            color: #333;
-            margin-bottom: 10px;
-            font-size: 1.1rem;
+            color: var(--text-primary);
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .affiliate-link {
             display: block;
-            padding: 10px 15px;
-            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            padding: 12px 18px;
+            background: var(--success-gradient);
             color: white;
             text-decoration: none;
-            border-radius: 6px;
-            margin-bottom: 8px;
+            border-radius: 12px;
+            margin-bottom: 10px;
             text-align: center;
             font-weight: 600;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            font-size: 0.95rem;
+            transition: var(--transition-bounce);
+            box-shadow: 0 4px 15px rgba(17, 153, 142, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .affiliate-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .affiliate-link:hover::before {
+            left: 100%;
         }
 
         .affiliate-link:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(17, 153, 142, 0.4);
             color: white;
             text-decoration: none;
         }
@@ -146,58 +322,93 @@
         }
 
         .form-group {
-            margin-bottom: 25px;
+            margin-bottom: 30px;
+            position: relative;
         }
 
         label {
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 12px;
             font-weight: 600;
-            color: #333;
-            font-size: 1.1rem;
+            color: var(--text-primary);
+            font-size: 1.15rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        label i {
+            color: var(--text-secondary);
+            font-size: 1rem;
         }
 
         textarea {
             width: 100%;
-            padding: 15px;
-            border: 2px solid #e1e5e9;
-            border-radius: 8px;
-            font-family: 'Courier New', monospace;
+            padding: 20px;
+            border: 2px solid var(--border-color);
+            border-radius: 16px;
+            font-family: 'JetBrains Mono', 'Courier New', monospace;
             font-size: 14px;
             resize: vertical;
-            transition: border-color 0.3s ease;
+            transition: var(--transition-smooth);
+            background: var(--surface-color);
+            backdrop-filter: blur(10px);
+            color: var(--text-primary);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
         }
 
         textarea:focus {
             outline: none;
             border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15), 0 8px 30px rgba(0, 0, 0, 0.15);
+            transform: translateY(-2px);
         }
 
         .question-input {
-            min-height: 100px;
+            min-height: 120px;
         }
 
         .code-input {
-            min-height: 200px;
+            min-height: 240px;
+            font-family: 'JetBrains Mono', 'Courier New', monospace;
         }
 
         .submit-btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--primary-gradient);
             color: white;
             border: none;
-            padding: 15px 30px;
-            border-radius: 8px;
+            padding: 18px 40px;
+            border-radius: 16px;
             font-size: 1.1rem;
             font-weight: 600;
             cursor: pointer;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            transition: var(--transition-bounce);
             width: 100%;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.6s;
+        }
+
+        .submit-btn:hover::before {
+            left: 100%;
         }
 
         .submit-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
         }
 
         .submit-btn:disabled {
@@ -206,20 +417,47 @@
             transform: none;
         }
 
+        .generate-btn {
+            background: var(--success-gradient);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-bounce);
+            box-shadow: 0 4px 15px rgba(17, 153, 142, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .generate-btn:hover {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(17, 153, 142, 0.4);
+        }
+
         .loading {
             display: none;
             text-align: center;
-            padding: 20px;
+            padding: 40px;
+            background: var(--surface-color);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+            margin-top: 30px;
+            box-shadow: var(--shadow-light);
         }
 
         .spinner {
-            border: 4px solid #f3f3f3;
+            border: 4px solid rgba(102, 126, 234, 0.2);
             border-top: 4px solid #667eea;
             border-radius: 50%;
-            width: 40px;
-            height: 40px;
+            width: 50px;
+            height: 50px;
             animation: spin 1s linear infinite;
-            margin: 0 auto 15px;
+            margin: 0 auto 20px;
         }
 
         @keyframes spin {
@@ -227,49 +465,77 @@
             100% { transform: rotate(360deg); }
         }
 
+        .loading p {
+            color: var(--text-primary);
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
         .result {
-            margin-top: 30px;
-            padding: 25px;
-            border-radius: 8px;
+            margin-top: 40px;
+            padding: 30px;
+            border-radius: 20px;
             display: none;
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-light);
+            animation: slideUp 0.5s ease-out;
         }
 
         .result.success {
-            background: #d4edda;
-            border: 1px solid #c3e6cb;
-            color: #155724;
+            background: linear-gradient(135deg, rgba(17, 153, 142, 0.1), rgba(56, 239, 125, 0.1));
+            border-color: rgba(17, 153, 142, 0.3);
+            color: var(--text-primary);
         }
 
         .result.error {
-            background: #f8d7da;
-            border: 1px solid #f5c6cb;
-            color: #721c24;
+            background: linear-gradient(135deg, rgba(255, 81, 47, 0.1), rgba(221, 36, 118, 0.1));
+            border-color: rgba(255, 81, 47, 0.3);
+            color: var(--text-primary);
         }
 
         .grade-display {
-            font-size: 2rem;
-            font-weight: bold;
+            font-size: 2.5rem;
+            font-weight: 700;
             text-align: center;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
+            background: var(--success-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: none;
         }
 
         .feedback {
             font-size: 1.1rem;
-            line-height: 1.6;
+            line-height: 1.7;
+            color: var(--text-primary);
         }
 
         .status {
             text-align: center;
-            padding: 20px;
-            color: #666;
+            padding: 25px;
+            color: var(--text-secondary);
             font-size: 1.1rem;
+            background: var(--surface-color);
+            backdrop-filter: blur(20px);
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            margin-top: 30px;
+            box-shadow: var(--shadow-light);
+        }
+
+        #serverStatus {
+            font-weight: 600;
+            transition: var(--transition-smooth);
         }
 
         /* Footer Monetization */
         .footer-monetization {
-            background: #f8f9fa;
-            padding: 20px;
-            border-top: 1px solid #e1e5e9;
+            background: var(--surface-color);
+            backdrop-filter: blur(20px);
+            padding: 30px;
+            border-top: 1px solid var(--border-color);
             text-align: center;
         }
 
@@ -278,25 +544,35 @@
             justify-content: center;
             gap: 20px;
             flex-wrap: wrap;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
 
         .footer-link {
-            color: #667eea;
+            color: var(--text-primary);
             text-decoration: none;
             font-weight: 600;
-            padding: 8px 16px;
-            border-radius: 6px;
-            transition: background-color 0.2s ease;
+            padding: 12px 20px;
+            border-radius: 12px;
+            transition: var(--transition-bounce);
+            background: rgba(102, 126, 234, 0.1);
+            border: 1px solid rgba(102, 126, 234, 0.2);
         }
 
         .footer-link:hover {
-            background-color: #e9ecef;
-            color: #667eea;
+            background: var(--primary-gradient);
+            color: white;
             text-decoration: none;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
         }
 
-        @media (max-width: 768px) {
+        .footer-text {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin-bottom: 0;
+        }
+
+        @media (max-width: 1024px) {
             body {
                 padding: 0;
                 margin: 0;
@@ -523,12 +799,29 @@
     </style>
 </head>
 <body>
+    <!-- Animated Background -->
+    <div class="animated-bg">
+        <div class="particles">
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+        </div>
+    </div>
+
+    <!-- Theme Toggle -->
+    <div class="theme-toggle" onclick="toggleTheme()">
+        <i class="fas fa-moon" id="themeIcon"></i>
+    </div>
+
     <div class="container">
         <div class="header">
-            <h1>🐍 Python Testing Agent</h1>
+            <h1><i class="fab fa-python"></i> Python Testing Agent</h1>
             <p>Submit your Python code and questions for intelligent grading and feedback</p>
-            <p style="margin-top: 10px; font-size: 0.9rem; opacity: 0.8;">
-                By <a href="https://hyunjaemoon.com" target="_blank" style="color: white; text-decoration: underline;">Hyun Jae Moon</a>
+            <p style="margin-top: 15px; font-size: 1rem; opacity: 0.9;">
+                By <a href="https://hyunjaemoon.com" target="_blank" style="color: white; text-decoration: underline; font-weight: 500;">Hyun Jae Moon</a>
             </p>
         </div>
 
@@ -536,21 +829,16 @@
             <div class="content-area">
                 <form id="gradeForm">
                     <div class="form-group">
-                        <label for="question">Question or Problem Description:</label>
-                        <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 8px; flex-wrap: wrap;">
-                            <button type="button" id="generateQuestionBtn" style="
-                                background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-                                color: white;
-                                border: none;
-                                padding: 8px 16px;
-                                border-radius: 6px;
-                                font-size: 0.9rem;
-                                font-weight: 600;
-                                cursor: pointer;
-                                transition: transform 0.2s ease, box-shadow 0.2s ease;
-                                white-space: nowrap;
-                            ">🎲 Generate Question</button>
-                            <span id="generateStatus" style="font-size: 0.9rem; color: #666;"></span>
+                        <label for="question">
+                            <i class="fas fa-question-circle"></i>
+                            Question or Problem Description
+                        </label>
+                        <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 12px; flex-wrap: wrap;">
+                            <button type="button" id="generateQuestionBtn" class="generate-btn">
+                                <i class="fas fa-dice"></i>
+                                Generate Question
+                            </button>
+                            <span id="generateStatus" style="font-size: 0.9rem; color: var(--text-secondary); font-weight: 500;"></span>
                         </div>
                         <textarea 
                             id="question" 
@@ -561,7 +849,10 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="code">Python Code:</label>
+                        <label for="code">
+                            <i class="fab fa-python"></i>
+                            Python Code
+                        </label>
                         <textarea 
                             id="code" 
                             class="code-input" 
@@ -571,6 +862,7 @@
                     </div>
 
                     <button type="submit" class="submit-btn" id="submitBtn">
+                        <i class="fas fa-check-circle"></i>
                         Grade My Code
                     </button>
                 </form>
@@ -590,21 +882,24 @@
             <!-- Monetization Sidebar -->
             <div class="monetization-sidebar">
                 <div class="monetization-section">
-                    <h3>📚 Learning Python</h3>
+                    <h3>
+                        <i class="fas fa-graduation-cap"></i>
+                        Learning Python
+                    </h3>
                     <a href="https://www.amazon.com/dp/1718502702?tag=pythontesting-20" class="affiliate-link" target="_blank">
-                        🐍 Python Crash Course
+                        <i class="fab fa-python"></i> Python Crash Course
                     </a>
                     <a href="https://www.amazon.com/dp/1098171306?tag=pythontesting-20" class="affiliate-link" target="_blank">
-                        📖 Learning Python
+                        <i class="fas fa-book"></i> Learning Python
                     </a>
                     <a href="https://www.amazon.com/dp/1718503407?tag=pythontesting-20" class="affiliate-link" target="_blank">
-                        🎯 Automate the Boring Stuff
+                        <i class="fas fa-robot"></i> Automate the Boring Stuff
                     </a>
                     <a href="https://www.amazon.com/dp/109810403X?tag=pythontesting-20" class="affiliate-link" target="_blank">
-                        📊 Python for Data Analysis
+                        <i class="fas fa-chart-bar"></i> Python for Data Analysis
                     </a>
                     <a href="https://www.amazon.com/dp/1492056359?tag=pythontesting-20" class="affiliate-link" target="_blank">
-                        🧠 Fluent Python
+                        <i class="fas fa-brain"></i> Fluent Python
                     </a>
                 </div>
             </div>
@@ -613,17 +908,45 @@
         <!-- Footer Monetization -->
         <div class="footer-monetization">
             <div class="footer-links">
-                <a href="#" class="footer-link" onclick="showContact()">Contact</a>
+                <a href="#" class="footer-link" onclick="showContact()">
+                    <i class="fas fa-envelope"></i> Contact
+                </a>
             </div>
-            <p style="color: #666; font-size: 0.9rem;">
-                Made with ❤️ for the Python community
+            <p class="footer-text">
+                Made with <i class="fas fa-heart" style="color: #e74c3c;"></i> for the Python community
             </p>
         </div>
     </div>
 
     <script>
-        // Check server status on page load
+        // Theme Toggle Function
+        function toggleTheme() {
+            const body = document.body;
+            const themeIcon = document.getElementById('themeIcon');
+            const currentTheme = body.getAttribute('data-theme');
+            
+            if (currentTheme === 'dark') {
+                body.removeAttribute('data-theme');
+                themeIcon.className = 'fas fa-moon';
+                localStorage.setItem('theme', 'light');
+            } else {
+                body.setAttribute('data-theme', 'dark');
+                themeIcon.className = 'fas fa-sun';
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        // Load saved theme on page load
         window.addEventListener('load', async () => {
+            const savedTheme = localStorage.getItem('theme');
+            const themeIcon = document.getElementById('themeIcon');
+            
+            if (savedTheme === 'dark') {
+                document.body.setAttribute('data-theme', 'dark');
+                themeIcon.className = 'fas fa-sun';
+            }
+
+            // Check server status
             try {
                 const response = await fetch('/health');
                 const data = await response.json();
@@ -672,11 +995,30 @@
 
                 if (response.ok) {
                     result.className = 'result success';
+                    
+                    // Extract the numeric grade value
+                    let gradeValue;
+                    if (typeof data.grade === 'object' && data.grade !== null) {
+                        gradeValue = data.grade.grade || 0;
+                    } else if (typeof data.grade === 'number') {
+                        gradeValue = data.grade;
+                    } else {
+                        gradeValue = 0;
+                    }
+                    
+                    // Extract feedback
+                    let feedbackText;
+                    if (typeof data.grade === 'object' && data.grade !== null) {
+                        feedbackText = data.grade.feedback || data.feedback || 'No feedback provided.';
+                    } else {
+                        feedbackText = data.feedback || 'No feedback provided.';
+                    }
+                    
                     result.innerHTML = `
-                        <div class="grade-display">Grade: ${data.grade.grade || data.grade}/100</div>
+                        <div class="grade-display">Grade: ${gradeValue}/100</div>
                         <div class="feedback">
                             <strong>Feedback:</strong><br>
-                            ${data.grade.feedback || data.feedback || 'No feedback provided.'}
+                            ${feedbackText}
                         </div>
                     `;
                 } else {
@@ -782,18 +1124,7 @@ print(example_function())`;
             }
         });
 
-        // Add hover effect for generate question button
-        document.getElementById('generateQuestionBtn').addEventListener('mouseenter', function() {
-            if (!this.disabled) {
-                this.style.transform = 'translateY(-1px)';
-                this.style.boxShadow = '0 5px 15px rgba(40, 167, 69, 0.3)';
-            }
-        });
-
-        document.getElementById('generateQuestionBtn').addEventListener('mouseleave', function() {
-            this.style.transform = 'translateY(0)';
-            this.style.boxShadow = 'none';
-        });
+        // Enhanced hover effects are now handled by CSS
 
         // Monetization functions
         function showContact() {
