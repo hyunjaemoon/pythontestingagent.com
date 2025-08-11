@@ -10,6 +10,10 @@ app = Flask(__name__)
 def home():
     return send_from_directory('.', 'index.html')
 
+@app.route('/naver7d3842db79066fa31723b07a3a5ff459.html')
+def naver():
+    return send_from_directory('.', 'naver7d3842db79066fa31723b07a3a5ff459.html')
+
 @app.route('/health')
 def health():
     return jsonify({"status": "healthy"})
