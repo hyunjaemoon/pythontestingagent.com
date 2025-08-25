@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { Toaster } from 'react-hot-toast'
 import { motion, AnimatePresence } from 'framer-motion'
 import Header from './components/Header'
@@ -21,6 +21,7 @@ function App() {
   const [question, setQuestion] = useState('Write a function that calculates the factorial of a number')
   const [code, setCode] = useState('')
   const [gradeResult, setGradeResult] = useState<GradeData | null>(null)
+  const questionInputRef = useRef<HTMLDivElement>(null)
 
   const gradeCodeMutation = useGradeCode()
   const generateQuestionMutation = useGenerateQuestion()
@@ -50,6 +51,16 @@ function App() {
   const handleClearCode = () => {
     setCode('')
     setGradeResult(null)
+  }
+
+  const handleRetry = () => {
+    setGradeResult(null)
+  }
+
+  const handleNewQuestionFromResult = async () => {
+    setGradeResult(null)
+    setCode('')
+    await handleGenerateQuestion()
   }
 
   const containerVariants = {
@@ -94,6 +105,7 @@ function App() {
           <main role="main" className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-8 mt-6 sm:mt-12">
             <motion.div className="space-y-4 sm:space-y-6" variants={itemVariants}>
               <QuestionInput
+                ref={questionInputRef}
                 value={question}
                 onChange={setQuestion}
                 onGenerate={handleGenerateQuestion}
@@ -138,7 +150,12 @@ function App() {
                 exit="hidden"
                 className="mt-6 sm:mt-12"
               >
-                <GradeResult data={gradeResult} />
+                <GradeResult 
+                  data={gradeResult} 
+                  onRetry={handleRetry}
+                  onNewQuestion={handleNewQuestionFromResult}
+                  questionInputRef={questionInputRef}
+                />
               </motion.div>
             )}
           </AnimatePresence>

@@ -1,14 +1,17 @@
 import { motion } from 'framer-motion'
-import { Trophy, Star, Target, BookOpen, CheckCircle, AlertCircle, XCircle, Scroll } from 'lucide-react'
+import { Trophy, Star, Target, BookOpen, CheckCircle, XCircle, Scroll, RotateCcw, Shuffle } from 'lucide-react'
 import { GradeData } from '../App'
 import MarkdownViewer from './MarkdownViewer'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, RefObject } from 'react'
 
 interface GradeResultProps {
   data: GradeData
+  onRetry?: () => void
+  onNewQuestion?: () => void
+  questionInputRef?: RefObject<HTMLDivElement>
 }
 
-const GradeResult = ({ data }: GradeResultProps) => {
+const GradeResult = ({ data, onRetry, onNewQuestion, questionInputRef }: GradeResultProps) => {
   const resultRef = useRef<HTMLDivElement>(null)
 
   // Auto-scroll to result when component mounts
@@ -24,6 +27,29 @@ const GradeResult = ({ data }: GradeResultProps) => {
       return () => clearTimeout(timer)
     }
   }, [])
+
+  const scrollToQuestion = () => {
+    if (questionInputRef?.current) {
+      questionInputRef.current.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      })
+    }
+  }
+
+  const handleRetry = () => {
+    scrollToQuestion()
+    if (onRetry) {
+      setTimeout(() => onRetry(), 500) // Small delay for scroll to complete
+    }
+  }
+
+  const handleNewQuestion = () => {
+    scrollToQuestion()
+    if (onNewQuestion) {
+      setTimeout(() => onNewQuestion(), 500) // Small delay for scroll to complete
+    }
+  }
 
   const getGradeColor = (grade: number) => {
     if (grade >= 90) return 'text-green-400'
@@ -191,30 +217,30 @@ const GradeResult = ({ data }: GradeResultProps) => {
         </motion.div>
       </motion.div>
 
-      {/* Action Hints */}
+      {/* Motivational Action Buttons */}
       <motion.div
-        className="mt-6 flex flex-wrap gap-4 justify-center"
+        className="mt-8 flex flex-col sm:flex-row gap-4 justify-center"
         variants={itemVariants}
       >
-        {data.grade < 80 && (
-          <motion.div
-            className="flex items-center space-x-2 glass-button px-4 py-2 text-sm"
-            whileHover={{ scale: 1.05 }}
-          >
-            <AlertCircle className="w-4 h-4 text-yellow-400" />
-            <span className="text-secondary-300">Consider reviewing the feedback and trying again</span>
-          </motion.div>
-        )}
-        
-        {data.grade >= 90 && (
-          <motion.div
-            className="flex items-center space-x-2 glass-button px-4 py-2 text-sm"
-            whileHover={{ scale: 1.05 }}
-          >
-            <CheckCircle className="w-4 h-4 text-green-400" />
-            <span className="text-secondary-300">Ready for the next challenge!</span>
-          </motion.div>
-        )}
+        <motion.button
+          onClick={handleRetry}
+          className="flex items-center justify-center space-x-3 px-6 py-4 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white font-semibold rounded-xl shadow-lg hover:shadow-blue-500/25 transition-all duration-300"
+          whileHover={{ scale: 1.05, y: -2 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          <RotateCcw className="w-5 h-5" />
+          <span>Try Again</span>
+        </motion.button>
+
+        <motion.button
+          onClick={handleNewQuestion}
+          className="flex items-center justify-center space-x-3 px-6 py-4 bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-400 text-white font-semibold rounded-xl shadow-lg hover:shadow-purple-500/25 transition-all duration-300"
+          whileHover={{ scale: 1.05, y: -2 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          <Shuffle className="w-5 h-5" />
+          <span>New Question</span>
+        </motion.button>
       </motion.div>
     </motion.div>
   )

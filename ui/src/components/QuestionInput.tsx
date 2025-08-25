@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import { HelpCircle, Dice6, Sparkles } from 'lucide-react'
+import { forwardRef } from 'react'
 
 interface QuestionInputProps {
   value: string
@@ -8,14 +9,16 @@ interface QuestionInputProps {
   isGenerating?: boolean
 }
 
-const QuestionInput = ({ value, onChange, onGenerate, isGenerating }: QuestionInputProps) => {
-  return (
-    <motion.div
-      className="glass-card p-3 sm:p-6"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-    >
+const QuestionInput = forwardRef<HTMLDivElement, QuestionInputProps>(
+  ({ value, onChange, onGenerate, isGenerating }, ref) => {
+    return (
+      <motion.div
+        ref={ref}
+        className="glass-card p-3 sm:p-6"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-2">
         <div className="flex items-center space-x-2 sm:space-x-3">
           <motion.div
@@ -72,7 +75,7 @@ Examples:
 • Create a class to manage a simple banking system
 • Implement a binary search algorithm
 • Write a program that finds the longest palindrome in a string"
-          className="w-full h-32 sm:h-40 px-3 py-2 sm:px-4 sm:py-3 bg-white/5 border border-white/20 rounded-xl text-white placeholder-secondary-400 resize-none focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-300"
+          className="w-full h-80 sm:h-96 px-3 py-2 sm:px-4 sm:py-3 bg-white/5 border border-white/20 rounded-xl text-white placeholder-secondary-400 resize-none focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-300"
           style={{ 
             fontSize: '14px',
             lineHeight: '1.6',
@@ -118,7 +121,10 @@ Examples:
         ))}
       </motion.div>
     </motion.div>
-  )
-}
+    )
+  }
+)
+
+QuestionInput.displayName = 'QuestionInput'
 
 export default QuestionInput
