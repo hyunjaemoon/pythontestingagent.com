@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react'
 import { motion } from 'framer-motion'
 import Editor from '@monaco-editor/react'
-import { Code, Maximize2, Minimize2, Send, Zap } from 'lucide-react'
+import { Code, Maximize2, Minimize2, Send, Zap, Trash2, Sparkles } from 'lucide-react'
 
 interface CodeEditorProps {
   value: string
@@ -9,11 +9,12 @@ interface CodeEditorProps {
   isLoading?: boolean
   question?: string
   onGrade?: () => void
+  onClear?: () => void
   canGrade?: boolean
   isGrading?: boolean
 }
 
-const CodeEditor = ({ value, onChange, isLoading, question, onGrade, canGrade, isGrading }: CodeEditorProps) => {
+const CodeEditor = ({ value, onChange, isLoading, question, onGrade, onClear, canGrade, isGrading }: CodeEditorProps) => {
   const [isFullscreen, setIsFullscreen] = useState(false)
   const [editorTheme, setEditorTheme] = useState('vs-dark')
 
@@ -170,21 +171,81 @@ const CodeEditor = ({ value, onChange, isLoading, question, onGrade, canGrade, i
         </div>
       </motion.div>
 
+      {/* Integrated Action Buttons - show in normal mode */}
       {!isFullscreen && (
         <motion.div
-          className="mt-4 text-sm text-secondary-400"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.3 }}
+          className="mt-4 space-y-4"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3, duration: 0.5 }}
         >
-          <p className="flex items-center space-x-2">
-            <span>💡</span>
-            <span>Press Ctrl+Space for autocomplete, Ctrl+/ to comment, and use the sample code button to get started</span>
-          </p>
+          {/* Action Buttons */}
+          <div className="flex flex-col sm:flex-row gap-4">
+            <motion.button
+              onClick={onGrade}
+              disabled={!canGrade || isGrading}
+              className={`
+                flex-1 px-8 py-4 rounded-xl font-bold text-lg
+                ${canGrade && !isGrading
+                  ? 'bg-gradient-to-r from-primary-600 to-primary-500 hover:from-primary-500 hover:to-primary-400 text-white shadow-lg hover:shadow-primary-500/25 neon-glow'
+                  : 'bg-gray-600 text-gray-400 cursor-not-allowed'
+                }
+                transition-all duration-300 flex items-center justify-center space-x-3
+                disabled:opacity-50 disabled:cursor-not-allowed
+              `}
+              whileHover={canGrade && !isGrading ? { 
+                scale: 1.02, 
+                y: -2,
+                boxShadow: '0 20px 40px rgba(59, 130, 246, 0.3)'
+              } : {}}
+              whileTap={canGrade && !isGrading ? { scale: 0.98 } : {}}
+            >
+              {isGrading ? (
+                <>
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                  >
+                    <Sparkles className="w-6 h-6" />
+                  </motion.div>
+                  <span>Analyzing Code...</span>
+                </>
+              ) : (
+                <>
+                  <Send className="w-6 h-6" />
+                  <span>Grade My Code</span>
+                  <motion.div
+                    animate={{ x: [0, 5, 0] }}
+                    transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+                  >
+                    <Zap className="w-5 h-5" />
+                  </motion.div>
+                </>
+              )}
+            </motion.button>
+
+            <motion.button
+              onClick={onClear}
+              className="px-6 py-4 glass-button text-white hover:text-red-300 transition-all duration-300 flex items-center justify-center space-x-2 hover:border-red-500/30"
+              whileHover={{ scale: 1.05, y: -2 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <Trash2 className="w-5 h-5" />
+              <span className="font-medium">Clear</span>
+            </motion.button>
+          </div>
+
+          {/* Tips */}
+          <div className="text-sm text-secondary-400 border-t border-white/10 pt-4">
+            <p className="flex items-center space-x-2">
+              <span>💡</span>
+              <span>Press Ctrl+Space for autocomplete, Ctrl+/ to comment, and use the sample code button to get started</span>
+            </p>
+          </div>
         </motion.div>
       )}
 
-      {/* Grade button at bottom - only show in fullscreen */}
+      {/* Action buttons at bottom - only show in fullscreen */}
       {isFullscreen && onGrade && (
         <motion.div
           className="flex-shrink-0 pt-4 border-t border-white/10"
@@ -192,47 +253,59 @@ const CodeEditor = ({ value, onChange, isLoading, question, onGrade, canGrade, i
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5, duration: 0.4 }}
         >
-          <motion.button
-            onClick={handleGradeAndMinimize}
-            disabled={!canGrade || isGrading}
-            className={`
-              w-full flex items-center justify-center space-x-3 py-4 px-6 rounded-xl font-bold text-lg
-              ${canGrade && !isGrading
-                ? 'bg-gradient-to-r from-primary-600 to-primary-500 hover:from-primary-500 hover:to-primary-400 text-white shadow-lg hover:shadow-primary-500/25'
-                : 'bg-gray-600 text-gray-400 cursor-not-allowed'
-              }
-              transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed
-            `}
-            whileHover={canGrade && !isGrading ? { 
-              scale: 1.02, 
-              y: -2,
-              boxShadow: '0 20px 40px rgba(59, 130, 246, 0.3)'
-            } : {}}
-            whileTap={canGrade && !isGrading ? { scale: 0.98 } : {}}
-          >
-            {isGrading ? (
-              <>
-                <motion.div
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                >
-                  <Zap className="w-6 h-6" />
-                </motion.div>
-                <span>Analyzing Code...</span>
-              </>
-            ) : (
-              <>
-                <Send className="w-6 h-6" />
-                <span>Grade My Code</span>
-                <motion.div
-                  animate={{ x: [0, 5, 0] }}
-                  transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-                >
-                  <Zap className="w-5 h-5" />
-                </motion.div>
-              </>
-            )}
-          </motion.button>
+          <div className="flex flex-col sm:flex-row gap-4">
+            <motion.button
+              onClick={handleGradeAndMinimize}
+              disabled={!canGrade || isGrading}
+              className={`
+                flex-1 flex items-center justify-center space-x-3 py-4 px-6 rounded-xl font-bold text-lg
+                ${canGrade && !isGrading
+                  ? 'bg-gradient-to-r from-primary-600 to-primary-500 hover:from-primary-500 hover:to-primary-400 text-white shadow-lg hover:shadow-primary-500/25'
+                  : 'bg-gray-600 text-gray-400 cursor-not-allowed'
+                }
+                transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed
+              `}
+              whileHover={canGrade && !isGrading ? { 
+                scale: 1.02, 
+                y: -2,
+                boxShadow: '0 20px 40px rgba(59, 130, 246, 0.3)'
+              } : {}}
+              whileTap={canGrade && !isGrading ? { scale: 0.98 } : {}}
+            >
+              {isGrading ? (
+                <>
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                  >
+                    <Zap className="w-6 h-6" />
+                  </motion.div>
+                  <span>Analyzing Code...</span>
+                </>
+              ) : (
+                <>
+                  <Send className="w-6 h-6" />
+                  <span>Grade My Code</span>
+                  <motion.div
+                    animate={{ x: [0, 5, 0] }}
+                    transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+                  >
+                    <Zap className="w-5 h-5" />
+                  </motion.div>
+                </>
+              )}
+            </motion.button>
+
+            <motion.button
+              onClick={onClear}
+              className="px-6 py-4 glass-button text-white hover:text-red-300 transition-all duration-300 flex items-center justify-center space-x-2 hover:border-red-500/30"
+              whileHover={{ scale: 1.05, y: -2 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <Trash2 className="w-5 h-5" />
+              <span className="font-medium">Clear</span>
+            </motion.button>
+          </div>
         </motion.div>
       )}
     </motion.div>

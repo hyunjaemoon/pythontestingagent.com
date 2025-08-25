@@ -7,7 +7,6 @@ import QuestionInput from './components/QuestionInput'
 import GradeResult from './components/GradeResult'
 import ParticleBackground from './components/ParticleBackground'
 import StatusIndicator from './components/StatusIndicator'
-import ActionButtons from './components/ActionButtons'
 import AffiliateSidebar from './components/AffiliateSidebar'
 import { useGradeCode } from './hooks/useGradeCode'
 import { useGenerateQuestion } from './hooks/useGenerateQuestion'
@@ -111,13 +110,6 @@ function App() {
                 onGenerate={handleGenerateQuestion}
                 isGenerating={generateQuestionMutation.isPending}
               />
-              
-              <ActionButtons
-                onSubmit={handleSubmit}
-                onClear={handleClearCode}
-                isSubmitting={gradeCodeMutation.isPending}
-                canSubmit={!!question.trim() && !!code.trim()}
-              />
             </motion.div>
 
             <motion.div variants={itemVariants}>
@@ -127,6 +119,7 @@ function App() {
                 isLoading={gradeCodeMutation.isPending}
                 question={question}
                 onGrade={handleSubmit}
+                onClear={handleClearCode}
                 canGrade={!!question.trim() && !!code.trim()}
                 isGrading={gradeCodeMutation.isPending}
               />
