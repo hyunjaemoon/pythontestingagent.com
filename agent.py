@@ -115,7 +115,7 @@ class PythonTestingAgent:
             {topic}
             
             Please return the question in a json format with:
-            - "question": the generated question
+            - "question": the generated question under 500 characters
             """
             
             response = self.chat(prompt, [])

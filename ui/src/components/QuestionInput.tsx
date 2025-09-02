@@ -68,6 +68,7 @@ const QuestionInput = forwardRef<HTMLDivElement, QuestionInputProps>(
         <textarea
           value={value}
           onChange={(e) => onChange(e.target.value)}
+          disabled={isGenerating}
           placeholder="Describe the problem or question you're working on... 
           
 Examples:
@@ -75,7 +76,7 @@ Examples:
 • Create a class to manage a simple banking system
 • Implement a binary search algorithm
 • Write a program that finds the longest palindrome in a string"
-          className="w-full h-80 sm:h-96 px-3 py-2 sm:px-4 sm:py-3 bg-white/5 border border-white/20 rounded-xl text-white placeholder-secondary-400 resize-none focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-300"
+          className="w-full h-80 sm:h-96 px-3 py-2 sm:px-4 sm:py-3 bg-white/5 border border-white/20 rounded-xl text-white placeholder-secondary-400 resize-none focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
           style={{ 
             fontSize: '14px',
             lineHeight: '1.6',
@@ -101,17 +102,18 @@ Examples:
       >
         <p className="text-sm text-secondary-400 w-full mb-2">Quick templates:</p>
         {[
-          'Write a function that sorts a list',
-          'Create a class for a student record',
-          'Implement error handling',
-          'Write a recursive algorithm'
+          'Write a function that returns the sum of all even numbers in a list',
+          'Create a class called Book with title and author attributes',
+          'Write a function that reads a file and handles file not found errors',
+          'Write a recursive function to compute the nth Fibonacci number'
         ].map((template, index) => (
           <motion.button
             key={template}
-            onClick={() => onChange(template)}
-            className="glass-button px-3 py-1 text-xs text-secondary-300 hover:text-white transition-colors duration-200"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+            onClick={() => !isGenerating && onChange(template)}
+            disabled={isGenerating}
+            className="glass-button px-3 py-1 text-xs text-secondary-300 hover:text-white transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            whileHover={{ scale: isGenerating ? 1 : 1.05 }}
+            whileTap={{ scale: isGenerating ? 1 : 0.95 }}
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.1 * index }}
