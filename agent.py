@@ -1,5 +1,6 @@
 from vertexai.generative_models import Part, Content, GenerativeModel
 import vertexai
+import random
 
 MODEL_NAME = "gemini-2.5-flash"
 
@@ -107,15 +108,15 @@ class PythonTestingAgent:
             topic (str): The topic for the question
             
         Returns:
-            str: The generated question
+            str: A randomly selected question from 10 generated questions
         """
         try:
             prompt = f"""
-            Generate a question based on the following topic:
+            Generate 10 different questions based on the following topic:
             {topic}
             
-            Please return the question in a json format with:
-            - "question": the generated question under 500 characters
+            Please return the questions in a json format with:
+            - "questions": an array of 10 questions, each under 500 characters
             """
             
             response = self.chat(prompt, [])
@@ -126,7 +127,12 @@ class PythonTestingAgent:
             if json_match:
                 try:
                     result = json.loads(json_match.group())
-                    return result['question']
+                    questions = result.get('questions', [])
+                    if questions and len(questions) > 0:
+                        # Randomly select one question from the list
+                        return random.choice(questions)
+                    else:
+                        return "Error: No questions generated"
                 except json.JSONDecodeError:
                     pass
             

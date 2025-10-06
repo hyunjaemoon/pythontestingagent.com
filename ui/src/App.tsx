@@ -40,7 +40,7 @@ function App() {
 
   const handleGenerateQuestion = async () => {
     try {
-      const result = await generateQuestionMutation.mutateAsync({ topic: 'python programming' })
+      const result = await generateQuestionMutation.mutateAsync({ topic: 'leetcode style python programming' })
       setQuestion(result.question)
     } catch (error) {
       console.error('Failed to generate question:', error)
