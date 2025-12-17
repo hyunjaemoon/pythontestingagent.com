@@ -5,7 +5,7 @@ set -e
 
 # Parse command line arguments
 DEV_MODE=false
-USE_NEW_UI=false
+USE_NEW_UI=true
 HELP=false
 
 while [[ $# -gt 0 ]]; do
