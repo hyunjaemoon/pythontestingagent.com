@@ -7,7 +7,6 @@ import QuestionInput from './components/QuestionInput'
 import GradeResult from './components/GradeResult'
 import ParticleBackground from './components/ParticleBackground'
 import StatusIndicator from './components/StatusIndicator'
-import AffiliateSidebar from './components/AffiliateSidebar'
 import { useGradeCode } from './hooks/useGradeCode'
 import { useGenerateQuestion } from './hooks/useGenerateQuestion'
 
@@ -125,13 +124,6 @@ function App() {
               />
             </motion.div>
           </main>
-
-          {/* Affiliate Section - Always below main content */}
-          <aside role="complementary" aria-label="Learning Resources">
-            <motion.div variants={itemVariants} className="mt-6 sm:mt-12">
-              <AffiliateSidebar />
-            </motion.div>
-          </aside>
 
           <AnimatePresence mode="wait">
             {gradeResult && (
