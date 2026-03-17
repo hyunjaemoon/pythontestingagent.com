@@ -43,9 +43,6 @@ RUN npm run build
 # Go back to main directory
 WORKDIR /app
 
-# Set environment variable to use new UI by default in Docker
-ENV USE_NEW_UI=true
-
 # Expose the port your server runs on
 EXPOSE 8080
 

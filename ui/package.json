@@ -45,6 +45,7 @@
     "vite": "^7.1.5"
   },
   "overrides": {
-    "prismjs": "^1.30.0"
+    "prismjs": "^1.30.0",
+    "minimatch": ">=9.0.5"
   }
 }

@@ -36,21 +36,12 @@ Welcome to the completely redesigned Python Testing Agent with a modern, state-o
 - Hot reload enabled for instant changes
 - Access at: http://localhost:3000
 
-### Option 2: Production Mode with New UI
+### Option 2: Production Mode
 ```bash
-./run.sh --new-ui
+./run.sh
 ```
 - Builds the React app for production
 - Serves everything from the Flask backend
-- Access at: http://localhost:8080
-
-### Option 3: Original UI (Fallback)
-```bash
-./run.sh --old-ui
-# or simply
-./run.sh
-```
-- Uses the original HTML interface
 - Access at: http://localhost:8080
 
 ## 🎯 Features Showcase
@@ -145,7 +136,7 @@ The Dockerfile has been updated to support the new UI:
 # Installs Node.js alongside Python
 # Builds the React app during container build
 # Serves the built app via Flask
-# Sets USE_NEW_UI=true by default
+# Serves the built React app via Flask
 ```
 
 Build and run with Docker:
@@ -157,7 +148,6 @@ docker run -p 8080:8080 python-testing-agent
 ## 🔧 Configuration
 
 ### Environment Variables
-- `USE_NEW_UI=true/false` - Toggle between new and old UI
 - Development vs Production mode handled automatically
 
 ### Customization
