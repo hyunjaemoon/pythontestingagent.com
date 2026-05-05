@@ -6,7 +6,7 @@ import CodeEditor from './components/CodeEditor'
 import QuestionInput from './components/QuestionInput'
 import GradeResult from './components/GradeResult'
 import ParticleBackground from './components/ParticleBackground'
-import StatusIndicator from './components/StatusIndicator'
+import SiteNav from './components/SiteNav'
 import { useGradeCode } from './hooks/useGradeCode'
 import { useGenerateQuestion } from './hooks/useGenerateQuestion'
 
@@ -84,20 +84,20 @@ function App() {
   return (
     <div className="min-h-screen transition-all duration-500 dark">
       <ParticleBackground />
-      
+
       <motion.div
         className="relative z-10 min-h-screen"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
       >
-        <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-8 max-w-7xl">
+        <motion.div variants={itemVariants}>
+          <SiteNav />
+        </motion.div>
+
+        <div className="container mx-auto px-2 sm:px-4 pb-4 sm:pb-8 max-w-7xl">
           <motion.div variants={itemVariants}>
             <Header />
-          </motion.div>
-
-          <motion.div variants={itemVariants}>
-            <StatusIndicator />
           </motion.div>
 
           <main role="main" className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-8 mt-6 sm:mt-12">

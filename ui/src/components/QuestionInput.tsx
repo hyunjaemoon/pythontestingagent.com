@@ -21,15 +21,11 @@ const QuestionInput = forwardRef<HTMLDivElement, QuestionInputProps>(
       >
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-2">
         <div className="flex items-center space-x-2 sm:space-x-3">
-          <motion.div
-            animate={{ 
-              rotate: [0, 5, -5, 0],
-            }}
-            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-          >
-            <HelpCircle className="w-5 h-5 sm:w-6 sm:h-6 text-primary-400" />
-          </motion.div>
-          <h2 className="text-lg sm:text-xl font-bold text-white">Question or Problem</h2>
+          <HelpCircle
+            className="w-5 h-5 sm:w-6 sm:h-6 text-primary-400"
+            strokeWidth={1.75}
+          />
+          <h2 className="text-lg sm:text-xl font-semibold tracking-tight text-white">Question or Problem</h2>
         </div>
         
         <motion.button
