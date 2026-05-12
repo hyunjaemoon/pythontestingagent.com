@@ -3,11 +3,11 @@ import { motion } from 'framer-motion'
 const SignatureIcon = () => {
   return (
     <motion.a
-      href="https://hyunjaemoon.com"
+      href="https://moonai.kr"
       target="_blank"
       rel="noopener noreferrer"
-      aria-label="Visit Hyun Jae Moon's portfolio"
-      title="Created by Hyun Jae Moon"
+      aria-label="Visit MoonAI — production AI for businesses"
+      title="Built by MoonAI"
       className="signature-icon inline-flex items-center justify-center w-9 h-9 rounded-lg overflow-hidden border border-white/10 opacity-70"
       whileHover={{
         opacity: 1,

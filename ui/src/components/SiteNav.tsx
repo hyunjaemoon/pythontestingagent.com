@@ -9,9 +9,6 @@ const SiteNav = () => {
     >
       <div className="flex items-center gap-3">
         <SignatureIcon />
-        <span className="hidden sm:inline text-xs uppercase tracking-[0.2em] text-secondary-500">
-          hyunjaemoon
-        </span>
       </div>
       <StatusIndicator />
     </nav>
