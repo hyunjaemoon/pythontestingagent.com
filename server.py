@@ -19,10 +19,17 @@ def naver():
     return send_from_directory('.', 'naver7d3842db79066fa31723b07a3a5ff459.html')
 
 # API routes for both old and new UI
+HEALTH_CORS_ORIGINS = {'https://moonai.kr', 'https://moonai.co.kr'}
+
 @app.route('/health')
 @app.route('/api/health')
 def health():
-    return jsonify({"status": "healthy"})
+    resp = jsonify({"status": "healthy"})
+    resp.headers['Vary'] = 'Origin'
+    origin = request.headers.get('Origin')
+    if origin in HEALTH_CORS_ORIGINS:
+        resp.headers['Access-Control-Allow-Origin'] = origin
+    return resp
 
 @app.route('/generate-question', methods=['POST'])
 @app.route('/api/generate-question', methods=['POST'])
