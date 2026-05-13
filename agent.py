@@ -14,25 +14,14 @@ vertexai.init(project="python-testing-agent", location="us-central1")
 
 class PythonTestingAgent:
     def __init__(self):
-        self.client = GenerativeModel(
-            model_name=GRADER_MODEL,
-            system_instruction="""
-            You are a grader for a python coding test.
-            You will be given a python code and a question.
-            You will need to grade the code based on the question.
-            You will need to return the grade in a json format.
-            The json format should be like this:
-            {
-                "grade": "grade",
-                "feedback": "feedback"
-            }
-            The grade should be a number between 0 and 100.
-            The feedback should be a string that explains the grade.
-            """
-        )
+        # No system instruction on either client. The previous grader-shaped
+        # system_instruction conflicted with the new response_schema
+        # (it told the model "grade is a string", while the schema says
+        # INTEGER) and caused Gemini to wrap the real JSON inside its
+        # feedback field. Each method's prompt + schema is fully self-
+        # contained now, so a global instruction adds friction not value.
+        self.client = GenerativeModel(model_name=GRADER_MODEL)
         # Lighter, faster model used only for question generation.
-        # No system instruction — the task is fully specified by the prompt
-        # and constrained by a response schema.
         self.generator_client = GenerativeModel(model_name=GENERATOR_MODEL)
 
     def chat(self, message: str, history: list[str]) -> str:
@@ -59,7 +48,9 @@ class PythonTestingAgent:
 
     def grade(self, code: str, question: str, lang: str = "en") -> dict:
         """
-        Grade Python code based on a given question.
+        Grade Python code against a question using Gemini structured output.
+        Returns a guaranteed-shape dict — no regex parsing, no fallback to a
+        synthesized "50 / raw exception text" response.
 
         Args:
             code (str): The Python code to grade
@@ -67,55 +58,78 @@ class PythonTestingAgent:
             lang (str): 'en' or 'ko' — language to write the feedback in
 
         Returns:
-            dict: Contains 'grade' (int 0-100) and 'feedback' (str)
+            dict: {"grade": int 0-100, "feedback": str (Markdown)}
+                  On failure: {"grade": 0, "feedback": <user-friendly error>}
         """
+        schema = {
+            "type": "OBJECT",
+            "properties": {
+                "grade": {
+                    "type": "INTEGER",
+                    "description": "Integer score from 0 to 100 inclusive."
+                },
+                "feedback": {
+                    "type": "STRING",
+                    "description": "Markdown-formatted feedback explaining the grade."
+                }
+            },
+            "required": ["grade", "feedback"]
+        }
+
+        feedback_lang = (
+            "Write the feedback in natural, well-formatted Korean (한국어). "
+            "Code identifiers, keywords, and code blocks stay in English; "
+            "everything else — explanations, suggestions, headings — in Korean."
+            if lang == "ko"
+            else "Write the feedback in clear, well-formatted English."
+        )
+
+        prompt = f"""Grade this Python code against the question.
+
+Question:
+{question}
+
+Code:
+{code}
+
+Provide a grade from 0 to 100 and detailed Markdown feedback that explains
+the grade — correctness, style, edge cases, and concrete improvements.
+
+{feedback_lang}
+"""
+
         try:
-            feedback_lang = (
-                "Write the feedback in natural, well-formatted Korean (한국어). "
-                "Code identifiers, keywords, and code blocks stay in English; "
-                "everything else — explanations, suggestions, headings — in Korean."
-                if lang == "ko"
-                else "Write the feedback in clear, well-formatted English."
+            generation_config = GenerationConfig(
+                response_mime_type="application/json",
+                response_schema=schema,
+                temperature=0.3,
             )
-            prompt = f"""
-            Question: {question}
-
-            Code to grade:
-            {code}
-
-            Please grade this code based on the question. Return your response in JSON format with:
-            - "grade": a number between 0 and 100
-            - "feedback": detailed feedback (Markdown supported) explaining the grade.
-
-            {feedback_lang}
-            """
-            
-            # Use the chat method to get the response
-            response = self.chat(prompt, [])
-            
-            # Try to parse JSON from the response
-            import json
-            import re
-            
-            # Look for JSON in the response
-            json_match = re.search(r'\{.*\}', response, re.DOTALL)
-            if json_match:
-                try:
-                    result = json.loads(json_match.group())
-                    return result
-                except json.JSONDecodeError:
-                    pass
-            
-            # If JSON parsing fails, create a structured response
+            content = Content(role="user", parts=[Part.from_text(prompt)])
+            result = self.client.generate_content(
+                [content], generation_config=generation_config
+            )
+            data = json.loads(result.text)
+            # Defensive clamp: Gemini may stray outside 0-100 even with the
+            # schema's INTEGER type — keep the score in bounds.
+            grade_value = data.get("grade", 0)
+            try:
+                grade_int = max(0, min(100, int(grade_value)))
+            except (TypeError, ValueError):
+                grade_int = 0
             return {
-                "grade": 50,  # Default grade
-                "feedback": response
+                "grade": grade_int,
+                "feedback": data.get("feedback", ""),
             }
-            
         except Exception as e:
+            # Log the full exception server-side; return a user-safe message.
+            print(f"[grade] error: {e}", flush=True)
             return {
                 "grade": 0,
-                "feedback": f"Error during grading: {str(e)}"
+                "feedback": (
+                    "채점 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요."
+                    if lang == "ko"
+                    else "Something went wrong while grading. Please try again in a moment."
+                ),
             }
     
     def generate_question(self, topic: str, lang: str = "en") -> str:
