@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request, send_from_directory
+from flask import Flask, abort, jsonify, request, send_from_directory
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from werkzeug.middleware.proxy_fix import ProxyFix
@@ -8,6 +8,34 @@ from agent import PythonTestingAgent
 agent = PythonTestingAgent()
 
 app = Flask(__name__)
+
+# Cap inbound JSON at 64 KB. The rate limit defends against burst count;
+# this defends each call's payload size. Without it, a single in-quota
+# request can ship megabytes of "code" to Gemini and blow token cost.
+MAX_BODY_BYTES = 64 * 1024
+app.config['MAX_CONTENT_LENGTH'] = MAX_BODY_BYTES
+
+
+@app.before_request
+def _enforce_body_size():
+    # Belt-and-suspenders: Flask 3 / Werkzeug 3 has not been entirely
+    # reliable about enforcing MAX_CONTENT_LENGTH for every request shape,
+    # so we also check Content-Length up front. Aborts with 413 before any
+    # body is read or any rate-limit slot is spent on a giant payload.
+    if request.method in ('POST', 'PUT', 'PATCH'):
+        length = request.content_length
+        if length is not None and length > MAX_BODY_BYTES:
+            abort(413)
+
+
+@app.errorhandler(413)
+def too_large_handler(e):
+    resp = jsonify({
+        "error": "payload_too_large",
+        "message": f"Request body exceeded the {MAX_BODY_BYTES // 1024} KB limit.",
+    })
+    resp.status_code = 413
+    return resp
 
 # Trust the first proxy hop so Flask-Limiter keys by the real client IP
 # (Cloud Run / load balancers set X-Forwarded-For). Bump x_for if more
