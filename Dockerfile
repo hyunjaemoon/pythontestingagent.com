@@ -46,5 +46,12 @@ WORKDIR /app
 # Expose the port your server runs on
 EXPOSE 8080
 
-# Run the server
-CMD ["python3", "server.py"]
+# Run the server via gunicorn (production WSGI). Two workers is conservative
+# for a small Cloud Run instance; each worker is single-threaded and Flask
+# routes block on Vertex AI calls. Adjust --workers / --threads to match
+# instance CPU once load shape is known.
+#   * Honors $PORT (Cloud Run sets it)
+#   * --forwarded-allow-ips=* — ProxyFix in server.py reads X-Forwarded-For
+#     to key rate limits on the real client IP.
+#   * Sensible timeouts so a slow Gemini call doesn't hang the worker forever.
+CMD ["sh", "-c", "gunicorn --bind 0.0.0.0:${PORT:-8080} --workers 2 --threads 4 --timeout 60 --graceful-timeout 30 --forwarded-allow-ips=* --access-logfile - --error-logfile - server:app"]

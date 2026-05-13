@@ -84,9 +84,10 @@ if [ "$DEV_MODE" = true ]; then
     echo "   - Hot reload enabled ✨"
     echo ""
 
-    # Start backend server in background
+    # Start backend server in background. Debug mode is dev-only — production
+    # ships gunicorn via the Dockerfile, never python server.py.
     echo "🐍 Starting Flask backend..."
-    python server.py &
+    FLASK_DEBUG=1 python server.py &
     BACKEND_PID=$!
 
     # Start frontend dev server
