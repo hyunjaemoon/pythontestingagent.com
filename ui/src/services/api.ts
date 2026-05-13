@@ -30,6 +30,7 @@ api.interceptors.response.use(
 export interface GradeRequest {
   question: string
   code: string
+  lang?: 'en' | 'ko'
 }
 
 export interface GradeResponse {
@@ -39,6 +40,7 @@ export interface GradeResponse {
 
 export interface GenerateQuestionRequest {
   topic: string
+  lang?: 'en' | 'ko'
 }
 
 export interface GenerateQuestionResponse {
@@ -73,6 +75,33 @@ export const generateQuestion = async (data: GenerateQuestionRequest): Promise<G
 
 export const checkServerStatus = async (): Promise<ServerStatusResponse> => {
   const response = await api.get<ServerStatusResponse>('/health')
+  return response.data
+}
+
+export type YoutubeAngle = 'tutorial' | 'concept' | 'walkthrough'
+
+export interface YoutubeSuggestion {
+  angle: YoutubeAngle
+  query: string
+}
+
+export interface YoutubeSuggestionsResponse {
+  topic: string
+  suggestions: YoutubeSuggestion[]
+}
+
+export interface YoutubeSuggestionsRequest {
+  question: string
+  lang: 'en' | 'ko'
+}
+
+export const fetchYoutubeSuggestions = async (
+  data: YoutubeSuggestionsRequest
+): Promise<YoutubeSuggestionsResponse> => {
+  const response = await api.post<YoutubeSuggestionsResponse>(
+    '/youtube-suggestions',
+    data
+  )
   return response.data
 }
 

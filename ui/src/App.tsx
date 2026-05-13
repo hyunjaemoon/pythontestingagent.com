@@ -9,6 +9,7 @@ import ParticleBackground from './components/ParticleBackground'
 import SiteNav from './components/SiteNav'
 import { useGradeCode } from './hooks/useGradeCode'
 import { useGenerateQuestion } from './hooks/useGenerateQuestion'
+import { useLang } from './i18n/LanguageContext'
 
 export interface GradeData {
   grade: number
@@ -16,7 +17,8 @@ export interface GradeData {
 }
 
 function App() {
-  const [question, setQuestion] = useState('Write a function that calculates the factorial of a number')
+  const { lang } = useLang()
+  const [question, setQuestion] = useState('')
   const [code, setCode] = useState('')
   const [gradeResult, setGradeResult] = useState<GradeData | null>(null)
   const questionInputRef = useRef<HTMLDivElement>(null)
@@ -25,12 +27,13 @@ function App() {
   const generateQuestionMutation = useGenerateQuestion()
 
   const handleSubmit = async () => {
-    if (!question.trim() || !code.trim()) {
-      return
-    }
-
+    if (!question.trim() || !code.trim()) return
     try {
-      const result = await gradeCodeMutation.mutateAsync({ question: question.trim(), code: code.trim() })
+      const result = await gradeCodeMutation.mutateAsync({
+        question: question.trim(),
+        code: code.trim(),
+        lang,
+      })
       setGradeResult(result)
     } catch (error) {
       console.error('Failed to grade code:', error)
@@ -39,7 +42,13 @@ function App() {
 
   const handleGenerateQuestion = async () => {
     try {
-      const result = await generateQuestionMutation.mutateAsync({ topic: 'leetcode style python programming' })
+      const result = await generateQuestionMutation.mutateAsync({
+        topic:
+          lang === 'ko'
+            ? '리트코드 스타일 파이썬 프로그래밍'
+            : 'leetcode style python programming',
+        lang,
+      })
       setQuestion(result.question)
     } catch (error) {
       console.error('Failed to generate question:', error)
@@ -51,9 +60,7 @@ function App() {
     setGradeResult(null)
   }
 
-  const handleRetry = () => {
-    setGradeResult(null)
-  }
+  const handleRetry = () => setGradeResult(null)
 
   const handleNewQuestionFromResult = async () => {
     setGradeResult(null)
@@ -65,24 +72,17 @@ function App() {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
-      transition: {
-        duration: 0.6,
-        staggerChildren: 0.1
-      }
-    }
+      transition: { duration: 0.5, staggerChildren: 0.08 },
+    },
   }
 
   const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: { duration: 0.5 }
-    }
+    hidden: { y: 18, opacity: 0 },
+    visible: { y: 0, opacity: 1, transition: { duration: 0.5 } },
   }
 
   return (
-    <div className="min-h-screen transition-all duration-500 dark">
+    <div className="min-h-screen dark relative">
       <ParticleBackground />
 
       <motion.div
@@ -95,13 +95,13 @@ function App() {
           <SiteNav />
         </motion.div>
 
-        <div className="container mx-auto px-2 sm:px-4 pb-4 sm:pb-8 max-w-7xl">
+        <div className="container mx-auto px-4 sm:px-6 pb-12 sm:pb-20 max-w-7xl">
           <motion.div variants={itemVariants}>
             <Header />
           </motion.div>
 
-          <main role="main" className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-8 mt-6 sm:mt-12">
-            <motion.div className="space-y-4 sm:space-y-6" variants={itemVariants}>
+          <main role="main" className="grid grid-cols-12 gap-5 sm:gap-7 mt-6 sm:mt-10">
+            <motion.div className="col-span-12 lg:col-span-6" variants={itemVariants}>
               <QuestionInput
                 ref={questionInputRef}
                 value={question}
@@ -111,7 +111,7 @@ function App() {
               />
             </motion.div>
 
-            <motion.div variants={itemVariants}>
+            <motion.div className="col-span-12 lg:col-span-6" variants={itemVariants}>
               <CodeEditor
                 value={code}
                 onChange={setCode}
@@ -133,10 +133,11 @@ function App() {
                 initial="hidden"
                 animate="visible"
                 exit="hidden"
-                className="mt-6 sm:mt-12"
+                className="mt-6 sm:mt-10"
               >
-                <GradeResult 
-                  data={gradeResult} 
+                <GradeResult
+                  data={gradeResult}
+                  question={question}
                   onRetry={handleRetry}
                   onNewQuestion={handleNewQuestionFromResult}
                   questionInputRef={questionInputRef}
@@ -150,12 +151,15 @@ function App() {
       <Toaster
         position="top-right"
         toastOptions={{
-          className: 'glass-card border-white/20',
           style: {
-            background: 'rgba(255, 255, 255, 0.1)',
-            backdropFilter: 'blur(20px)',
-            color: 'white',
-            border: '1px solid rgba(255, 255, 255, 0.2)',
+            background: '#16151F',
+            color: '#EDE9DC',
+            border: '1px solid #2A2837',
+            borderRadius: '2px',
+            fontFamily: 'JetBrains Mono, monospace',
+            fontSize: '12px',
+            letterSpacing: '0.05em',
+            padding: '12px 16px',
           },
         }}
       />
