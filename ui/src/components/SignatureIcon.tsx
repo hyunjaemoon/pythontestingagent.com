@@ -8,13 +8,9 @@ const SignatureIcon = () => {
       rel="noopener noreferrer"
       aria-label="Visit MoonAI — production AI for businesses"
       title="Built by MoonAI"
-      className="signature-icon inline-flex items-center justify-center w-9 h-9 rounded-lg overflow-hidden border border-white/10 opacity-70"
-      whileHover={{
-        opacity: 1,
-        rotate: -6,
-        scale: 1.05,
-      }}
-      transition={{ duration: 0.3, ease: 'easeOut' }}
+      className="inline-flex items-center justify-center w-8 h-8 rounded-[2px] overflow-hidden border border-ink-rule"
+      whileHover={{ scale: 1.06, borderColor: 'rgba(245,197,24,0.8)', rotate: -3 }}
+      transition={{ duration: 0.25, ease: 'easeOut' }}
     >
       <img
         src="/portfolio_icon.png"

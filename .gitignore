@@ -205,3 +205,15 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# macOS
+.DS_Store
+
+# Playwright MCP scratch (snapshots, console logs)
+.playwright-mcp/
+
+# Local dev screenshots from manual UI verification
+/final-*.png
+/redesign-*.png
+/responsive-*.png
+/grade-with-youtube.png

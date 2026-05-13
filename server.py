@@ -62,23 +62,44 @@ def health():
         resp.headers['Access-Control-Allow-Origin'] = origin
     return resp
 
+def _normalized_lang(value):
+    return value if value in ('en', 'ko') else 'en'
+
 @app.route('/generate-question', methods=['POST'])
 @app.route('/api/generate-question', methods=['POST'])
 @limiter.limit(ACTION_RATE_LIMITS)
 def generate_question():
-    data = request.json
-    question = agent.generate_question(data.get('topic'))
+    data = request.json or {}
+    lang = _normalized_lang(data.get('lang'))
+    question = agent.generate_question(data.get('topic'), lang=lang)
     return jsonify({"question": question})
 
 @app.route('/grade', methods=['POST'])
 @app.route('/api/grade', methods=['POST'])
 @limiter.limit(ACTION_RATE_LIMITS)
 def grade():
-    data = request.json
+    data = request.json or {}
     code = data.get('code')
     question = data.get('question')
-    grade = agent.grade(code, question)
+    lang = _normalized_lang(data.get('lang'))
+    grade = agent.grade(code, question, lang=lang)
     return jsonify({"grade": grade})
+
+@app.route('/youtube-suggestions', methods=['POST'])
+@app.route('/api/youtube-suggestions', methods=['POST'])
+@limiter.limit(ACTION_RATE_LIMITS)
+def youtube_suggestions():
+    data = request.json or {}
+    question = (data.get('question') or '').strip()
+    lang = data.get('lang') or 'en'
+    if not question:
+        return jsonify({"error": "missing_question"}), 400
+    if lang not in ('en', 'ko'):
+        lang = 'en'
+    result = agent.suggest_youtube_searches(question, lang=lang)
+    if isinstance(result, dict) and result.get('error'):
+        return jsonify(result), 502
+    return jsonify(result)
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 8080))
