@@ -46,7 +46,7 @@ class PythonTestingAgent:
         except Exception as e:
             return f"Error generating response: {str(e)}"
 
-    def grade(self, code: str, question: str, lang: str = "en") -> dict:
+    def grade(self, code: str, question: str, lang: str = "ko") -> dict:
         """
         Grade Python code against a question using Gemini structured output.
         Returns a guaranteed-shape dict — no regex parsing, no fallback to a
@@ -132,7 +132,7 @@ the grade — correctness, style, edge cases, and concrete improvements.
                 ),
             }
     
-    def generate_question(self, topic: str, lang: str = "en") -> str:
+    def generate_question(self, topic: str, lang: str = "ko") -> str:
         """
         Generate a question based on a given topic. Uses the lightweight
         flash-lite model with structured output for fast, deterministic JSON.
@@ -197,7 +197,7 @@ Topic: {topic}
         except Exception as e:
             return f"Error during question generation: {str(e)}"
 
-    def suggest_youtube_searches(self, question: str, lang: str = "en") -> dict:
+    def suggest_youtube_searches(self, question: str, lang: str = "ko") -> dict:
         """
         Use Gemini structured output to derive 3 concept-aware YouTube search
         queries for a Python question. Returns smart short queries (3-7 words)

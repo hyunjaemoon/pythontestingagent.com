@@ -12,12 +12,10 @@ const LanguageContext = createContext<LanguageContextValue | null>(null)
 const STORAGE_KEY = 'pta.lang'
 
 const detectInitialLang = (): Lang => {
-  if (typeof window === 'undefined') return 'en'
+  if (typeof window === 'undefined') return 'ko'
   const stored = window.localStorage.getItem(STORAGE_KEY)
   if (stored === 'en' || stored === 'ko') return stored
-  const browser = window.navigator.language.toLowerCase()
-  if (browser.startsWith('ko')) return 'ko'
-  return 'en'
+  return 'ko'
 }
 
 export const LanguageProvider = ({ children }: { children: ReactNode }) => {

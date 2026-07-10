@@ -91,7 +91,7 @@ def health():
     return resp
 
 def _normalized_lang(value):
-    return value if value in ('en', 'ko') else 'en'
+    return value if value in ('en', 'ko') else 'ko'
 
 @app.route('/generate-question', methods=['POST'])
 @app.route('/api/generate-question', methods=['POST'])
@@ -119,11 +119,9 @@ def grade():
 def youtube_suggestions():
     data = request.json or {}
     question = (data.get('question') or '').strip()
-    lang = data.get('lang') or 'en'
+    lang = _normalized_lang(data.get('lang'))
     if not question:
         return jsonify({"error": "missing_question"}), 400
-    if lang not in ('en', 'ko'):
-        lang = 'en'
     result = agent.suggest_youtube_searches(question, lang=lang)
     if isinstance(result, dict) and result.get('error'):
         return jsonify(result), 502
