@@ -5,6 +5,11 @@ const api = axios.create({
   timeout: 30000,
 })
 
+// Grading calls Gemini 2.5 Flash for long-form markdown feedback and
+// routinely takes 15-30+ seconds; match the server's gunicorn --timeout 60
+// ceiling instead of the default 30s budget shared by the quick endpoints.
+const GRADE_TIMEOUT_MS = 60000
+
 // Request interceptor
 api.interceptors.request.use(
   (config) => {
@@ -52,7 +57,9 @@ export interface ServerStatusResponse {
 }
 
 export const gradeCode = async (data: GradeRequest): Promise<GradeResponse> => {
-  const response = await api.post<{ grade: GradeResponse }>('/grade', data)
+  const response = await api.post<{ grade: GradeResponse }>('/grade', data, {
+    timeout: GRADE_TIMEOUT_MS,
+  })
   
   // Handle both nested and flat response formats
   if (response.data.grade && typeof response.data.grade === 'object') {
