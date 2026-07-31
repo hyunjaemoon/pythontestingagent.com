@@ -5,11 +5,12 @@ import MarkdownViewer from './MarkdownViewer'
 import { useEffect, useRef, RefObject } from 'react'
 import { useLang } from '../i18n/LanguageContext'
 import { useYoutubeSuggestions } from '../hooks/useYoutubeSuggestions'
-import { YoutubeAngle } from '../services/api'
+import { GraderModel, YoutubeAngle } from '../services/api'
 
 interface GradeResultProps {
   data: GradeData
   question?: string
+  model: GraderModel
   onRetry?: () => void
   onNewQuestion?: () => void
   questionInputRef?: RefObject<HTMLDivElement>
@@ -31,6 +32,7 @@ const sanitizeQuestionForQuery = (q: string) => {
 const GradeResult = ({
   data,
   question,
+  model,
   onRetry,
   onNewQuestion,
   questionInputRef,
@@ -41,7 +43,7 @@ const GradeResult = ({
 
   // Ask Gemini (via /api/youtube-suggestions) for concept-aware queries.
   // Falls back to client-side templating below if the call fails or while loading.
-  const youtube = useYoutubeSuggestions(question, lang)
+  const youtube = useYoutubeSuggestions(question, lang, model)
   const liveSuggestions =
     youtube.data?.suggestions && youtube.data.suggestions.length > 0
       ? youtube.data.suggestions

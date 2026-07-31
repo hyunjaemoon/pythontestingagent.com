@@ -3,6 +3,7 @@ import { motion } from 'framer-motion'
 import Editor from '@monaco-editor/react'
 import { Maximize2, Minimize2, ArrowRight, Trash2, Loader2 } from 'lucide-react'
 import { useLang } from '../i18n/LanguageContext'
+import { GRADER_MODELS, GraderModel } from '../services/api'
 
 interface CodeEditorProps {
   value: string
@@ -13,6 +14,8 @@ interface CodeEditorProps {
   onClear?: () => void
   canGrade?: boolean
   isGrading?: boolean
+  model: GraderModel
+  onModelChange: (model: GraderModel) => void
 }
 
 const CodeEditor = ({
@@ -24,6 +27,8 @@ const CodeEditor = ({
   onClear,
   canGrade,
   isGrading,
+  model,
+  onModelChange,
 }: CodeEditorProps) => {
   const [isFullscreen, setIsFullscreen] = useState(false)
   const [editorTheme, setEditorTheme] = useState('vs-dark')
@@ -35,6 +40,26 @@ const CodeEditor = ({
       onChange(newValue || '')
     },
     [onChange]
+  )
+
+  // Rendered above the action buttons in both the normal and fullscreen
+  // footers — the header row is too tight to hold a second select at the
+  // narrow (lg two-column) breakpoint.
+  const modelPicker = (
+    <label className="flex flex-col sm:flex-row sm:items-center gap-1.5 sm:gap-3">
+      <span className="eyebrow whitespace-nowrap">{t.editor.model}</span>
+      <select
+        value={model}
+        onChange={(e) => onModelChange(e.target.value as GraderModel)}
+        className="flex-1 min-w-0 bg-transparent border border-ink-rule rounded-[2px] px-2 py-2 text-[11px] font-mono uppercase tracking-[0.12em] text-ink-soft hover:border-gold focus:outline-none focus:border-gold transition-colors"
+      >
+        {GRADER_MODELS.map((id) => (
+          <option key={id} value={id}>
+            {t.editor.models[id].label} — {t.editor.models[id].blurb}
+          </option>
+        ))}
+      </select>
+    </label>
   )
 
   const handleGradeAndMinimize = () => {
@@ -218,6 +243,8 @@ const CodeEditor = ({
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
         >
+          {modelPicker}
+
           <div className="flex flex-col sm:flex-row gap-3">
             <motion.button
               type="button"
@@ -265,11 +292,13 @@ const CodeEditor = ({
 
       {isFullscreen && onGrade && (
         <motion.div
-          className="flex-shrink-0 pt-4 border-t border-ink-rule"
+          className="flex-shrink-0 pt-4 border-t border-ink-rule space-y-3"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.3 }}
         >
+          {modelPicker}
+
           <div className="flex flex-col sm:flex-row gap-3">
             <motion.button
               type="button"

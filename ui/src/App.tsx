@@ -10,10 +10,13 @@ import SiteNav from './components/SiteNav'
 import { useGradeCode } from './hooks/useGradeCode'
 import { useGenerateQuestion } from './hooks/useGenerateQuestion'
 import { useLang } from './i18n/LanguageContext'
+import { DEFAULT_GRADER_MODEL, GraderModel } from './services/api'
 
 export interface GradeData {
   grade: number
   feedback: string
+  /** Model the server actually graded with — may differ if it rejected ours. */
+  model?: string
 }
 
 function App() {
@@ -21,6 +24,7 @@ function App() {
   const [question, setQuestion] = useState('')
   const [code, setCode] = useState('')
   const [gradeResult, setGradeResult] = useState<GradeData | null>(null)
+  const [model, setModel] = useState<GraderModel>(DEFAULT_GRADER_MODEL)
   const questionInputRef = useRef<HTMLDivElement>(null)
 
   const gradeCodeMutation = useGradeCode()
@@ -33,6 +37,7 @@ function App() {
         question: question.trim(),
         code: code.trim(),
         lang,
+        model,
       })
       setGradeResult(result)
     } catch (error) {
@@ -121,6 +126,8 @@ function App() {
                 onClear={handleClearCode}
                 canGrade={!!question.trim() && !!code.trim()}
                 isGrading={gradeCodeMutation.isPending}
+                model={model}
+                onModelChange={setModel}
               />
             </motion.div>
           </main>
@@ -138,6 +145,7 @@ function App() {
                 <GradeResult
                   data={gradeResult}
                   question={question}
+                  model={model}
                   onRetry={handleRetry}
                   onNewQuestion={handleNewQuestionFromResult}
                   questionInputRef={questionInputRef}

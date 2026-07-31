@@ -3,7 +3,12 @@ from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from werkzeug.middleware.proxy_fix import ProxyFix
 import os
-from agent import PythonTestingAgent
+from agent import (
+    DEFAULT_GRADER_MODEL,
+    GRADER_MODELS,
+    PythonTestingAgent,
+    resolve_grader_model,
+)
 
 agent = PythonTestingAgent()
 
@@ -93,6 +98,23 @@ def health():
 def _normalized_lang(value):
     return value if value in ('en', 'ko') else 'ko'
 
+
+@app.route('/models', methods=['GET'])
+@app.route('/api/models', methods=['GET'])
+@limiter.exempt
+def models():
+    """
+    Grader models the UI offers. The UI renders its own localized labels, but
+    this endpoint keeps the allowed ids discoverable and is the source of
+    truth for what /grade will accept.
+    """
+    return jsonify({
+        "default": DEFAULT_GRADER_MODEL,
+        "models": [
+            {"id": model_id, **meta} for model_id, meta in GRADER_MODELS.items()
+        ],
+    })
+
 @app.route('/generate-question', methods=['POST'])
 @app.route('/api/generate-question', methods=['POST'])
 @limiter.limit(ACTION_RATE_LIMITS)
@@ -110,7 +132,8 @@ def grade():
     code = data.get('code')
     question = data.get('question')
     lang = _normalized_lang(data.get('lang'))
-    grade = agent.grade(code, question, lang=lang)
+    model = resolve_grader_model(data.get('model'))
+    grade = agent.grade(code, question, lang=lang, model=model)
     return jsonify({"grade": grade})
 
 @app.route('/youtube-suggestions', methods=['POST'])
@@ -122,7 +145,8 @@ def youtube_suggestions():
     lang = _normalized_lang(data.get('lang'))
     if not question:
         return jsonify({"error": "missing_question"}), 400
-    result = agent.suggest_youtube_searches(question, lang=lang)
+    model = resolve_grader_model(data.get('model'))
+    result = agent.suggest_youtube_searches(question, lang=lang, model=model)
     if isinstance(result, dict) and result.get('error'):
         return jsonify(result), 502
     return jsonify(result)

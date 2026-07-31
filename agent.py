@@ -3,26 +3,67 @@ import vertexai
 import random
 import json
 
-# Models split by job:
-#   - GRADER: needs better reasoning (used by /grade and /youtube-suggestions).
-#   - GENERATOR: a creative-but-cheap task; use the lighter, faster flash-lite.
-GRADER_MODEL = "gemini-2.5-flash"
-GENERATOR_MODEL = "gemini-2.5-flash-lite"
+# Grader models the UI lets a learner pick between. Gemini 2.5 is deprecated
+# and no longer offered; everything here is Gemini 3.x. Keys are the stable
+# ids the API accepts — the UI sends one of these back on /grade.
+# `label`/`blurb` are what the selector renders, `tier` drives its ordering.
+GRADER_MODELS = {
+    "gemini-3.5-flash": {
+        "label": "Gemini 3.5 Flash",
+        "blurb": "Balanced — the default grader.",
+    },
+    "gemini-3.1-pro-preview": {
+        "label": "Gemini 3.1 Pro",
+        "blurb": "Deepest reasoning, slowest.",
+    },
+    "gemini-3.5-flash-lite": {
+        "label": "Gemini 3.5 Flash Lite",
+        "blurb": "Fastest, lightest feedback.",
+    },
+    "gemini-3.1-flash-lite": {
+        "label": "Gemini 3.1 Flash Lite",
+        "blurb": "Previous-generation lite model.",
+    },
+}
 
-vertexai.init(project="python-testing-agent", location="us-central1")
+DEFAULT_GRADER_MODEL = "gemini-3.5-flash"
+
+# Question generation is a creative-but-cheap task and is not user-selectable;
+# it always runs on the lightest model.
+GENERATOR_MODEL = "gemini-3.5-flash-lite"
+
+# Gemini 3.x is served from the `global` endpoint, not a regional one.
+vertexai.init(project="python-testing-agent", location="global")
+
+
+def resolve_grader_model(name: str | None) -> str:
+    """Map an untrusted model name from the client onto an allowed id."""
+    return name if name in GRADER_MODELS else DEFAULT_GRADER_MODEL
 
 
 class PythonTestingAgent:
     def __init__(self):
-        # No system instruction on either client. The previous grader-shaped
+        # No system instruction on any client. The previous grader-shaped
         # system_instruction conflicted with the new response_schema
         # (it told the model "grade is a string", while the schema says
         # INTEGER) and caused Gemini to wrap the real JSON inside its
         # feedback field. Each method's prompt + schema is fully self-
         # contained now, so a global instruction adds friction not value.
-        self.client = GenerativeModel(model_name=GRADER_MODEL)
+        #
+        # GenerativeModel is a thin, stateless handle, but constructing one
+        # per request is wasted work — cache one per grader model instead.
+        self._graders = {
+            name: GenerativeModel(model_name=name) for name in GRADER_MODELS
+        }
         # Lighter, faster model used only for question generation.
         self.generator_client = GenerativeModel(model_name=GENERATOR_MODEL)
+
+    @property
+    def client(self):
+        return self._graders[DEFAULT_GRADER_MODEL]
+
+    def _grader(self, model: str | None):
+        return self._graders[resolve_grader_model(model)]
 
     def chat(self, message: str, history: list[str]) -> str:
         try:
@@ -46,7 +87,9 @@ class PythonTestingAgent:
         except Exception as e:
             return f"Error generating response: {str(e)}"
 
-    def grade(self, code: str, question: str, lang: str = "ko") -> dict:
+    def grade(
+        self, code: str, question: str, lang: str = "ko", model: str | None = None
+    ) -> dict:
         """
         Grade Python code against a question using Gemini structured output.
         Returns a guaranteed-shape dict — no regex parsing, no fallback to a
@@ -56,9 +99,12 @@ class PythonTestingAgent:
             code (str): The Python code to grade
             question (str): The question or problem description
             lang (str): 'en' or 'ko' — language to write the feedback in
+            model (str): a key of GRADER_MODELS; anything else falls back to
+                the default grader.
 
         Returns:
-            dict: {"grade": int 0-100, "feedback": str (Markdown)}
+            dict: {"grade": int 0-100, "feedback": str (Markdown),
+                   "model": str (the model that actually graded)}
                   On failure: {"grade": 0, "feedback": <user-friendly error>}
         """
         schema = {
@@ -98,6 +144,8 @@ the grade — correctness, style, edge cases, and concrete improvements.
 {feedback_lang}
 """
 
+        resolved_model = resolve_grader_model(model)
+
         try:
             generation_config = GenerationConfig(
                 response_mime_type="application/json",
@@ -105,7 +153,7 @@ the grade — correctness, style, edge cases, and concrete improvements.
                 temperature=0.3,
             )
             content = Content(role="user", parts=[Part.from_text(prompt)])
-            result = self.client.generate_content(
+            result = self._graders[resolved_model].generate_content(
                 [content], generation_config=generation_config
             )
             data = json.loads(result.text)
@@ -119,12 +167,14 @@ the grade — correctness, style, edge cases, and concrete improvements.
             return {
                 "grade": grade_int,
                 "feedback": data.get("feedback", ""),
+                "model": resolved_model,
             }
         except Exception as e:
             # Log the full exception server-side; return a user-safe message.
-            print(f"[grade] error: {e}", flush=True)
+            print(f"[grade] model={resolved_model} error: {e}", flush=True)
             return {
                 "grade": 0,
+                "model": resolved_model,
                 "feedback": (
                     "채점 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요."
                     if lang == "ko"
@@ -197,7 +247,9 @@ Topic: {topic}
         except Exception as e:
             return f"Error during question generation: {str(e)}"
 
-    def suggest_youtube_searches(self, question: str, lang: str = "ko") -> dict:
+    def suggest_youtube_searches(
+        self, question: str, lang: str = "ko", model: str | None = None
+    ) -> dict:
         """
         Use Gemini structured output to derive 3 concept-aware YouTube search
         queries for a Python question. Returns smart short queries (3-7 words)
@@ -206,6 +258,8 @@ Topic: {topic}
         Args:
             question: the prompt the learner was graded on
             lang: 'en' or 'ko' — language the queries should be written in
+            model: a key of GRADER_MODELS; anything else falls back to the
+                default grader.
 
         Returns:
             dict shaped as:
@@ -279,7 +333,7 @@ Question:
                 temperature=0.4,
             )
             content = Content(role="user", parts=[Part.from_text(prompt)])
-            result = self.client.generate_content(
+            result = self._grader(model).generate_content(
                 [content], generation_config=generation_config
             )
             data = json.loads(result.text)
