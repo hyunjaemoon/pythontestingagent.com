@@ -15,15 +15,14 @@ const GRADE_TIMEOUT_MS = 60000
 // GRADER_MODELS in agent.py — the server re-validates and silently falls back
 // to the default for anything it doesn't recognize.
 export const GRADER_MODELS = [
-  'gemini-3.5-flash',
+  'gemini-3.8-flash',
   'gemini-3.1-pro-preview',
   'gemini-3.5-flash-lite',
-  'gemini-3.1-flash-lite',
 ] as const
 
 export type GraderModel = (typeof GRADER_MODELS)[number]
 
-export const DEFAULT_GRADER_MODEL: GraderModel = 'gemini-3.5-flash'
+export const DEFAULT_GRADER_MODEL: GraderModel = 'gemini-3.8-flash'
 
 // Request interceptor
 api.interceptors.request.use(

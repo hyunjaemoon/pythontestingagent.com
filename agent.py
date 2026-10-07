@@ -8,8 +8,8 @@ import json
 # ids the API accepts — the UI sends one of these back on /grade.
 # `label`/`blurb` are what the selector renders, `tier` drives its ordering.
 GRADER_MODELS = {
-    "gemini-3.5-flash": {
-        "label": "Gemini 3.5 Flash",
+    "gemini-3.8-flash": {
+        "label": "Gemini 3.8 Flash",
         "blurb": "Balanced — the default grader.",
     },
     "gemini-3.1-pro-preview": {
@@ -20,13 +20,9 @@ GRADER_MODELS = {
         "label": "Gemini 3.5 Flash Lite",
         "blurb": "Fastest, lightest feedback.",
     },
-    "gemini-3.1-flash-lite": {
-        "label": "Gemini 3.1 Flash Lite",
-        "blurb": "Previous-generation lite model.",
-    },
 }
 
-DEFAULT_GRADER_MODEL = "gemini-3.5-flash"
+DEFAULT_GRADER_MODEL = "gemini-3.8-flash"
 
 # Question generation is a creative-but-cheap task and is not user-selectable;
 # it always runs on the lightest model.
@@ -150,7 +146,6 @@ the grade — correctness, style, edge cases, and concrete improvements.
             generation_config = GenerationConfig(
                 response_mime_type="application/json",
                 response_schema=schema,
-                temperature=0.3,
             )
             content = Content(role="user", parts=[Part.from_text(prompt)])
             result = self._graders[resolved_model].generate_content(
@@ -233,7 +228,6 @@ Topic: {topic}
             generation_config = GenerationConfig(
                 response_mime_type="application/json",
                 response_schema=schema,
-                temperature=0.9,
             )
             content = Content(role="user", parts=[Part.from_text(prompt)])
             result = self.generator_client.generate_content(
@@ -330,7 +324,6 @@ Question:
             generation_config = GenerationConfig(
                 response_mime_type="application/json",
                 response_schema=schema,
-                temperature=0.4,
             )
             content = Content(role="user", parts=[Part.from_text(prompt)])
             result = self._grader(model).generate_content(

@@ -58,10 +58,9 @@ Examples:
       },
       model: 'Grader',
       models: {
-        'gemini-3.5-flash': { label: 'Gemini 3.5 Flash', blurb: 'Balanced — recommended' },
+        'gemini-3.8-flash': { label: 'Gemini 3.8 Flash', blurb: 'Balanced — recommended' },
         'gemini-3.1-pro-preview': { label: 'Gemini 3.1 Pro', blurb: 'Deepest reasoning, slowest' },
         'gemini-3.5-flash-lite': { label: 'Gemini 3.5 Flash Lite', blurb: 'Fastest, lightest feedback' },
-        'gemini-3.1-flash-lite': { label: 'Gemini 3.1 Flash Lite', blurb: 'Previous generation, lite' },
       },
       grade: 'Submit for grading',
       grading: 'Reading your code…',
@@ -174,10 +173,9 @@ Examples:
       },
       model: '채점 모델',
       models: {
-        'gemini-3.5-flash': { label: 'Gemini 3.5 Flash', blurb: '균형형 — 추천' },
+        'gemini-3.8-flash': { label: 'Gemini 3.8 Flash', blurb: '균형형 — 추천' },
         'gemini-3.1-pro-preview': { label: 'Gemini 3.1 Pro', blurb: '가장 깊은 추론, 가장 느림' },
         'gemini-3.5-flash-lite': { label: 'Gemini 3.5 Flash Lite', blurb: '가장 빠르고 가벼운 피드백' },
-        'gemini-3.1-flash-lite': { label: 'Gemini 3.1 Flash Lite', blurb: '이전 세대 경량 모델' },
       },
       grade: '채점 요청',
       grading: '코드를 읽는 중…',
