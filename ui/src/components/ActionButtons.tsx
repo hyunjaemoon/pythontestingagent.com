@@ -22,7 +22,7 @@ const ActionButtons = ({ onSubmit, onClear, isSubmitting, canSubmit }: ActionBut
         className={`
           flex-1 px-8 py-4 rounded-xl font-bold text-lg
           ${canSubmit && !isSubmitting
-            ? 'bg-gradient-to-r from-primary-600 to-primary-500 hover:from-primary-500 hover:to-primary-400 text-white shadow-lg hover:shadow-primary-500/25 neon-glow'
+            ? 'bg-linear-to-r from-primary-600 to-primary-500 hover:from-primary-500 hover:to-primary-400 text-white shadow-lg hover:shadow-primary-500/25 neon-glow'
             : 'bg-gray-600 text-gray-400 cursor-not-allowed'
           }
           transition-all duration-300 flex items-center justify-center space-x-3

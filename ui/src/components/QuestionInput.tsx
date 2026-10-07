@@ -73,7 +73,7 @@ const QuestionInput = forwardRef<HTMLDivElement, QuestionInputProps>(
             disabled={isGenerating}
             placeholder={t.question.placeholder}
             className={`lab-input w-full h-72 sm:h-96 px-4 py-3.5 placeholder-ink-rule-strong resize-none disabled:opacity-50 disabled:cursor-not-allowed text-sm leading-relaxed ${
-              isKo ? 'font-kr text-[15px]' : ''
+              isKo ? 'font-kr' : ''
             }`}
             spellCheck={false}
           />
@@ -105,7 +105,7 @@ const QuestionInput = forwardRef<HTMLDivElement, QuestionInputProps>(
                     onClick={() => !isGenerating && onChange(template)}
                     disabled={isGenerating}
                     className={`group text-left text-xs leading-relaxed px-3 py-2.5 border border-ink-rule rounded-[2px] text-ink-soft hover:text-ink-pure hover:border-gold transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
-                      isKo ? 'font-kr text-[13px]' : 'font-mono'
+                      isKo ? 'font-kr' : 'font-mono'
                     }`}
                     whileHover={!isGenerating ? { x: 2 } : undefined}
                     initial={{ opacity: 0, x: -8 }}

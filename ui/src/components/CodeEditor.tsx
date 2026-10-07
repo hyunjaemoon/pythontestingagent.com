@@ -51,7 +51,7 @@ const CodeEditor = ({
       <select
         value={model}
         onChange={(e) => onModelChange(e.target.value as GraderModel)}
-        className="flex-1 min-w-0 bg-transparent border border-ink-rule rounded-[2px] px-2 py-2 text-[11px] font-mono uppercase tracking-[0.12em] text-ink-soft hover:border-gold focus:outline-none focus:border-gold transition-colors"
+        className="flex-1 min-w-0 bg-transparent border border-ink-rule rounded-[2px] px-2 py-2 text-[11px] font-mono uppercase tracking-[0.12em] text-ink-soft hover:border-gold focus:outline-hidden focus:border-gold transition-colors"
       >
         {GRADER_MODELS.map((id) => (
           <option key={id} value={id}>
@@ -84,7 +84,7 @@ const CodeEditor = ({
     >
       {isFullscreen && question && (
         <motion.div
-          className="mb-4 p-3 border border-ink-rule rounded-[2px] flex-shrink-0 bg-ink-raised"
+          className="mb-4 p-3 border border-ink-rule rounded-[2px] shrink-0 bg-ink-raised"
           initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
         >
@@ -105,7 +105,7 @@ const CodeEditor = ({
       <header
         className={`flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 ${
           isFullscreen ? 'mb-3' : 'mb-5'
-        } flex-shrink-0`}
+        } shrink-0`}
       >
         <div>
           <div className="flex items-center gap-2.5">
@@ -135,7 +135,7 @@ const CodeEditor = ({
             <select
               value={editorTheme}
               onChange={(e) => setEditorTheme(e.target.value)}
-              className="bg-transparent border border-ink-rule rounded-[2px] px-2 py-1.5 text-[11px] font-mono uppercase tracking-[0.12em] text-ink-soft hover:border-gold focus:outline-none focus:border-gold transition-colors"
+              className="bg-transparent border border-ink-rule rounded-[2px] px-2 py-1.5 text-[11px] font-mono uppercase tracking-[0.12em] text-ink-soft hover:border-gold focus:outline-hidden focus:border-gold transition-colors"
             >
               <option value="vs-dark">{t.editor.themes.dark}</option>
               <option value="light">{t.editor.themes.light}</option>
@@ -173,7 +173,7 @@ const CodeEditor = ({
       >
         {isLoading && (
           <motion.div
-            className="absolute inset-0 bg-ink-bg/80 backdrop-blur-sm flex items-center justify-center z-10"
+            className="absolute inset-0 bg-ink-bg/80 backdrop-blur-xs flex items-center justify-center z-10"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
           >
@@ -238,7 +238,7 @@ const CodeEditor = ({
 
       {!isFullscreen && (
         <motion.div
-          className="mt-5 space-y-4 flex-shrink-0"
+          className="mt-5 space-y-4 shrink-0"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
@@ -250,7 +250,7 @@ const CodeEditor = ({
               type="button"
               onClick={onGrade}
               disabled={!canGrade || isGrading}
-              className={`lab-button lab-button-primary flex-1 justify-center !py-4 !text-[13px]`}
+              className={`lab-button lab-button-primary flex-1 justify-center py-4! text-[13px]!`}
               whileHover={canGrade && !isGrading ? { y: -2 } : undefined}
               whileTap={canGrade && !isGrading ? { scale: 0.98 } : undefined}
             >
@@ -270,7 +270,7 @@ const CodeEditor = ({
             <motion.button
               type="button"
               onClick={onClear}
-              className="lab-button lab-button-ghost !py-4 justify-center"
+              className="lab-button lab-button-ghost py-4! justify-center"
               whileHover={{ y: -2 }}
               whileTap={{ scale: 0.95 }}
               aria-label={t.editor.clear}
@@ -292,7 +292,7 @@ const CodeEditor = ({
 
       {isFullscreen && onGrade && (
         <motion.div
-          className="flex-shrink-0 pt-4 border-t border-ink-rule space-y-3"
+          className="shrink-0 pt-4 border-t border-ink-rule space-y-3"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.3 }}
@@ -304,7 +304,7 @@ const CodeEditor = ({
               type="button"
               onClick={handleGradeAndMinimize}
               disabled={!canGrade || isGrading}
-              className="lab-button lab-button-primary flex-1 justify-center !py-3.5 !text-[13px]"
+              className="lab-button lab-button-primary flex-1 justify-center py-3.5! text-[13px]!"
               whileHover={canGrade && !isGrading ? { y: -2 } : undefined}
               whileTap={canGrade && !isGrading ? { scale: 0.98 } : undefined}
             >
@@ -324,7 +324,7 @@ const CodeEditor = ({
             <motion.button
               type="button"
               onClick={onClear}
-              className="lab-button lab-button-ghost !py-3.5 justify-center"
+              className="lab-button lab-button-ghost py-3.5! justify-center"
               whileHover={{ y: -2 }}
               whileTap={{ scale: 0.95 }}
             >

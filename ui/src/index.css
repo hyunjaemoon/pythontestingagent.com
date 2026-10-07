@@ -1,6 +1,6 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+
+@custom-variant dark (&:is(.dark *));
 
 /* ─────────────────────────────────────────────────────────────────────────────
    Editorial Code Lab — design tokens
@@ -31,6 +31,348 @@
   --font-kr: 'Pretendard', 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
 }
 
+@theme {
+  --color-ink-bg: #0e0d14;
+  --color-ink-surface: #16151f;
+  --color-ink-raised: #1c1b27;
+  --color-ink-rule: #2a2837;
+  --color-ink-ruleStrong: #3d3a50;
+  --color-ink-muted: #8b8696;
+  --color-ink-soft: #b7b2c2;
+  --color-ink-text: #ede9dc;
+  --color-ink-pure: #faf7ee;
+
+  --color-gold-50: #fff8dc;
+  --color-gold-400: #ffd64a;
+  --color-gold-500: #f5c518;
+  --color-gold-600: #c99c00;
+  --color-gold-700: #8a6900;
+  --color-gold: #f5c518;
+
+  --color-indigo-glow: #7c8cff;
+
+  --color-mint-glow: #6fe8b0;
+
+  --color-coral-glow: #ff7a7a;
+
+  --color-primary-50: #fff8dc;
+  --color-primary-100: #ffefaa;
+  --color-primary-200: #ffe56c;
+  --color-primary-300: #ffd64a;
+  --color-primary-400: #ffd64a;
+  --color-primary-500: #f5c518;
+  --color-primary-600: #c99c00;
+  --color-primary-700: #8a6900;
+  --color-primary-800: #5a4500;
+  --color-primary-900: #332700;
+  --color-primary-950: #1a1300;
+
+  --color-secondary-50: #faf7ee;
+  --color-secondary-100: #ede9dc;
+  --color-secondary-200: #d6d1c2;
+  --color-secondary-300: #b7b2c2;
+  --color-secondary-400: #8b8696;
+  --color-secondary-500: #6e687c;
+  --color-secondary-600: #4e4a5e;
+  --color-secondary-700: #2a2837;
+  --color-secondary-800: #16151f;
+  --color-secondary-900: #0e0d14;
+  --color-secondary-950: #07060a;
+
+  --color-accent-50: #e9fff4;
+  --color-accent-100: #c2fbdf;
+  --color-accent-200: #9bf2c8;
+  --color-accent-300: #6fe8b0;
+  --color-accent-400: #6fe8b0;
+  --color-accent-500: #3dcf8e;
+  --color-accent-600: #1fa46c;
+  --color-accent-700: #177450;
+  --color-accent-800: #0e4a33;
+  --color-accent-900: #062719;
+  --color-accent-950: #04140d;
+
+  --animate-fade-in: fadeIn 0.5s ease-in-out;
+  --animate-slide-up: slideUp 0.5s ease-out;
+  --animate-caret-blink: caretBlink 1.05s steps(1) infinite;
+  --animate-scanline: scanline 9s linear infinite;
+  --animate-hairline-pulse: hairlinePulse 3.2s ease-in-out infinite;
+
+  --font-display: Fraunces, ui-serif, Georgia, serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', Menlo, Consolas, monospace;
+  --font-kr: Pretendard, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+  --font-sans: 'JetBrains Mono', Pretendard, system-ui, sans-serif;
+
+  --tracking-tightest: -0.03em;
+  --tracking-crisp: -0.015em;
+
+  --background-image-paper-grain: url("data:image/svg+xml;utf8,<svg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.96  0 0 0 0 0.92  0 0 0 0 0.85  0 0 0 0.18 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+
+  @keyframes fadeIn {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+  @keyframes slideUp {
+    0% {
+      transform: translateY(20px);
+      opacity: 0;
+    }
+    100% {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+  @keyframes caretBlink {
+    0%,
+    49% {
+      opacity: 1;
+    }
+    50%,
+    100% {
+      opacity: 0;
+    }
+  }
+  @keyframes scanline {
+    0% {
+      transform: translateY(-100%);
+    }
+    100% {
+      transform: translateY(100vh);
+    }
+  }
+  @keyframes hairlinePulse {
+    0%,
+    100% {
+      opacity: 0.35;
+    }
+    50% {
+      opacity: 1;
+    }
+  }
+}
+
+/*
+  Tailwind CSS v4 changed a few preflight defaults (border color is now
+  `currentcolor`, buttons use `cursor: default`, placeholders use a translucent
+  `currentcolor`). These compatibility styles keep the v3 look.
+
+  If we ever want to remove these styles, we need to add explicit utilities to
+  any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+  }
+
+  button:not(:disabled),
+  [role='button']:not(:disabled) {
+    cursor: pointer;
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    color: var(--color-gray-400);
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Reusable design primitives
+   ────────────────────────────────────────────────────────────────────────────*/
+
+@utility lab-card {
+  background: var(--ink-surface);
+  border: var(--rule);
+  border-radius: 4px;
+  position: relative;
+}
+
+@utility lab-card-raised {
+  background: var(--ink-raised);
+  border: var(--rule);
+  border-radius: 4px;
+}
+
+@utility hairline {
+  border: var(--rule);
+}
+
+@utility hairline-strong {
+  border: var(--rule-strong);
+}
+
+@utility eyebrow {
+  /* Editorial section header — used for "§ 01 PROMPT" labels */
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 1;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+
+@utility eyebrow-gold {
+  color: var(--gold);
+}
+
+@utility lab-button {
+  /* Tagged button — terminal-prompt feel */
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-text);
+  background: transparent;
+  border: 1px solid var(--ink-rule-strong);
+  border-radius: 2px;
+  padding: 10px 14px;
+  transition: all 220ms ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+
+  &:hover {
+    border-color: var(--gold);
+    color: var(--gold-warm);
+    transform: translateY(-1px);
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  &:disabled:hover {
+    border-color: var(--ink-rule-strong);
+    color: var(--ink-text);
+    transform: none;
+  }
+}
+
+@utility lab-button-primary {
+  background: var(--gold);
+  color: #0a0910;
+  border-color: var(--gold);
+  font-weight: 600;
+
+  &:hover {
+    background: var(--gold-warm);
+    color: #0a0910;
+    border-color: var(--gold-warm);
+    box-shadow: 0 12px 32px -12px rgba(245, 197, 24, 0.5);
+  }
+}
+
+@utility lab-button-ghost {
+  border-color: var(--ink-rule);
+  color: var(--ink-soft);
+}
+
+@utility section-tag {
+  /* Numeric badge for §01 / §02 / §03 */
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  color: var(--gold);
+  display: inline-block;
+  padding: 4px 8px;
+  border: 1px solid var(--gold);
+  border-radius: 2px;
+  background: rgba(245, 197, 24, 0.04);
+}
+
+@utility caret {
+  /* Caret blink that suffixes editorial titles */
+  display: inline-block;
+  width: 0.55ch;
+  height: 0.95em;
+  background: var(--gold);
+  margin-left: 0.18em;
+  transform: translateY(0.08em);
+  animation: caretBlink 1.05s steps(1) infinite;
+}
+
+@utility dashed-rule {
+  /* Dashed-frame divider, evokes a coding journal margin */
+  border: 0;
+  border-top: 1px dashed var(--ink-rule-strong);
+  margin: 0;
+}
+
+@utility lab-input {
+  /* Tagged textarea / input */
+  background: transparent;
+  border: 1px solid var(--ink-rule);
+  border-radius: 2px;
+  color: var(--ink-text);
+  font-family: var(--font-mono);
+  transition:
+    border-color 200ms ease,
+    box-shadow 200ms ease;
+
+  &:focus {
+    outline: none;
+    border-color: var(--gold);
+    box-shadow: inset 0 0 0 1px rgba(245, 197, 24, 0.25);
+  }
+}
+
+@utility paper-grain {
+  /* Paper grain overlay (used on hero/header) */
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml;utf8,<svg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.96  0 0 0 0 0.92  0 0 0 0 0.85  0 0 0 0.18 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+}
+
+@utility glass-card {
+  /* Legacy aliases — preserve glass-* references in case any remain */
+  background: var(--ink-surface);
+  border: var(--rule);
+  border-radius: 4px;
+}
+
+@utility glass-button {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-text);
+  background: transparent;
+  border: 1px solid var(--ink-rule-strong);
+  border-radius: 2px;
+  padding: 8px 12px;
+  transition: all 200ms ease;
+
+  &:hover {
+    border-color: var(--gold);
+    color: var(--gold-warm);
+  }
+}
+
+@utility gradient-text {
+  background: linear-gradient(
+    180deg,
+    var(--ink-pure) 0%,
+    var(--ink-text) 70%,
+    var(--ink-soft) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
 @layer base {
   html {
     font-family: var(--font-mono);
@@ -40,20 +382,6 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     color-scheme: dark;
-  }
-
-  /* Korean script gets Pretendard for everything except mono spans */
-  html[lang='ko'] {
-    font-family: var(--font-kr);
-  }
-  html[lang='ko'] .font-display,
-  html[lang='ko'] [data-display='true'] {
-    font-family: var(--font-kr);
-    font-weight: 700;
-    letter-spacing: -0.04em;
-  }
-  html[lang='ko'] .font-mono {
-    font-family: var(--font-mono);
   }
 
   body {
@@ -84,190 +412,20 @@
   }
 }
 
-/* ─────────────────────────────────────────────────────────────────────────────
-   Reusable design primitives
-   ────────────────────────────────────────────────────────────────────────────*/
-
-@layer components {
-  .lab-card {
-    background: var(--ink-surface);
-    border: var(--rule);
-    border-radius: 4px;
-    position: relative;
-  }
-
-  .lab-card-raised {
-    background: var(--ink-raised);
-    border: var(--rule);
-    border-radius: 4px;
-  }
-
-  .hairline {
-    border: var(--rule);
-  }
-
-  .hairline-strong {
-    border: var(--rule-strong);
-  }
-
-  /* Editorial section header — used for "§ 01 PROMPT" labels */
-  .eyebrow {
-    font-family: var(--font-mono);
-    font-size: 11px;
-    line-height: 1;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--ink-muted);
-  }
-
-  .eyebrow-gold {
-    color: var(--gold);
-  }
-
-  /* Tagged button — terminal-prompt feel */
-  .lab-button {
-    font-family: var(--font-mono);
-    font-size: 12px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--ink-text);
-    background: transparent;
-    border: 1px solid var(--ink-rule-strong);
-    border-radius: 2px;
-    padding: 10px 14px;
-    transition: all 220ms ease;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .lab-button:hover {
-    border-color: var(--gold);
-    color: var(--gold-warm);
-    transform: translateY(-1px);
-  }
-
-  .lab-button:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-  }
-
-  .lab-button:disabled:hover {
-    border-color: var(--ink-rule-strong);
-    color: var(--ink-text);
-    transform: none;
-  }
-
-  .lab-button-primary {
-    background: var(--gold);
-    color: #0a0910;
-    border-color: var(--gold);
-    font-weight: 600;
-  }
-
-  .lab-button-primary:hover {
-    background: var(--gold-warm);
-    color: #0a0910;
-    border-color: var(--gold-warm);
-    box-shadow: 0 12px 32px -12px rgba(245, 197, 24, 0.5);
-  }
-
-  .lab-button-ghost {
-    border-color: var(--ink-rule);
-    color: var(--ink-soft);
-  }
-
-  /* Numeric badge for §01 / §02 / §03 */
-  .section-tag {
-    font-family: var(--font-mono);
-    font-size: 11px;
-    letter-spacing: 0.18em;
-    color: var(--gold);
-    display: inline-block;
-    padding: 4px 8px;
-    border: 1px solid var(--gold);
-    border-radius: 2px;
-    background: rgba(245, 197, 24, 0.04);
-  }
-
-  /* Caret blink that suffixes editorial titles */
-  .caret {
-    display: inline-block;
-    width: 0.55ch;
-    height: 0.95em;
-    background: var(--gold);
-    margin-left: 0.18em;
-    transform: translateY(0.08em);
-    animation: caretBlink 1.05s steps(1) infinite;
-  }
-
-  /* Dashed-frame divider, evokes a coding journal margin */
-  .dashed-rule {
-    border: 0;
-    border-top: 1px dashed var(--ink-rule-strong);
-    margin: 0;
-  }
-
-  /* Tagged textarea / input */
-  .lab-input {
-    background: transparent;
-    border: 1px solid var(--ink-rule);
-    border-radius: 2px;
-    color: var(--ink-text);
-    font-family: var(--font-mono);
-    transition: border-color 200ms ease, box-shadow 200ms ease;
-  }
-
-  .lab-input:focus {
-    outline: none;
-    border-color: var(--gold);
-    box-shadow: inset 0 0 0 1px rgba(245, 197, 24, 0.25);
-  }
-
-  /* Paper grain overlay (used on hero/header) */
-  .paper-grain {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    background-image: url("data:image/svg+xml;utf8,<svg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.96  0 0 0 0 0.92  0 0 0 0 0.85  0 0 0 0.18 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
-    opacity: 0.05;
-    mix-blend-mode: overlay;
-  }
-
-  /* Legacy aliases — preserve glass-* references in case any remain */
-  .glass-card {
-    background: var(--ink-surface);
-    border: var(--rule);
-    border-radius: 4px;
-  }
-
-  .glass-button {
-    font-family: var(--font-mono);
-    font-size: 12px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--ink-text);
-    background: transparent;
-    border: 1px solid var(--ink-rule-strong);
-    border-radius: 2px;
-    padding: 8px 12px;
-    transition: all 200ms ease;
-  }
-
-  .glass-button:hover {
-    border-color: var(--gold);
-    color: var(--gold-warm);
-  }
-
-  .gradient-text {
-    background: linear-gradient(180deg, var(--ink-pure) 0%, var(--ink-text) 70%, var(--ink-soft) 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-  }
+/* Korean script gets Pretendard for everything except mono spans.
+   Kept outside @layer so it still overrides font-display / font-light /
+   tracking-* utilities, which would otherwise win over anything in base. */
+html[lang='ko'] {
+  font-family: var(--font-kr);
+}
+html[lang='ko'] .font-display,
+html[lang='ko'] [data-display='true'] {
+  font-family: var(--font-kr);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+}
+html[lang='ko'] .font-mono {
+  font-family: var(--font-mono);
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
